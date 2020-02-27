@@ -1,0 +1,35 @@
+---
+title: "Norm score report"
+params:
+  path: NA
+  storedModel: NA
+  storedData: NA
+  ageDays: NA
+  meanproportion: NA
+  percentielScore: NA
+  participantData: NA
+  testData: NA
+  analizeData: NA
+  densityData: NA
+---
+
+```{r echo  = FALSE}
+library(knitr)
+source(paste(params$path, "plots.R", sep = '/'))
+kable(params$participantData, caption = 'Participant Info')
+kable(params$testData, caption = 'Test Info')
+kable(params$analizeData, caption = 'Analysis')
+
+```
+
+```{r echo  = FALSE}
+percetielPlot(params$storedData, params$percentielScore)
+```
+
+```{r echo  = FALSE}
+growthPlot(params$storedModel, params$storedData, params$ageDays, params$meanproportion)
+```
+
+```{r echo  = FALSE}
+densityScoreAgePlot(params$densityData)
+```
