@@ -15,7 +15,6 @@ params:
 
 ```{r echo  = FALSE}
 library(knitr)
-source(paste(params$path, "plots.R", sep = '/'))
 kable(params$participantData, caption = 'Participant Info')
 kable(params$testData, caption = 'Test Info')
 kable(params$analizeData, caption = 'Analysis')
@@ -23,6 +22,7 @@ kable(params$analizeData, caption = 'Analysis')
 ```
 
 ```{r echo  = FALSE}
+source(paste(params$path, "plots.R", sep = '/'))
 percetielPlot(params$storedData, params$percentielScore)
 ```
 

@@ -24,10 +24,8 @@ fluidPage(
                            'Zuid' = 'zuid',
                            'West' = 'west')
             ),
-            radioButtons('file_type', 'Selecteer bestandsformat::',
-                         c('Html' = 'html', 
-                           'PDF' = 'pdf')
-            ),
+            radioButtons('format', 'Selecteer bestandsformat:', c('PDF', 'HTML'),
+                         inline = TRUE),
             downloadButton('report', 'Generate report')
         ),
         mainPanel(

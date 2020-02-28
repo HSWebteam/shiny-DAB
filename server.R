@@ -10,21 +10,21 @@
 library("bitops")
 library("devtools")
 # install_github("HSWebteam/rDAB")
-# library("rDAB")
-library(rDAB, lib.loc = "/home/dasscheman/Surfdrive/Development/rdab")
+# library(rDAB, lib.loc = "/home/dasscheman/Surfdrive/Development/rdab")
+library("rDAB")
 
-library(knitr)
-library(rjson)
-library(jsonlite)
-library(httr)
-library(rmarkdown)
+library("knitr")
+library("rjson")
+library("jsonlite")
+library("httr")
+library("rmarkdown")
 
 library("R.utils", quietly = TRUE); # function getAbsolutePath
 library("tools", quietly = TRUE); # function file_path_sans_ext
 library("gdata", quietly = TRUE);
 library("dataframes2xls", quietly = TRUE);
 
-source("methods.R")
+source("dataPrep.R")
 source("plots.R")
 
 function(input, output, session) {
@@ -39,7 +39,7 @@ function(input, output, session) {
   filteredData <- function() {
     data = fetchedData()
     if(is.null(dim(data)) ||
-       NROW(data()) == 0) {
+       NROW(data) == 0) {
         return(FALSE)
     }
     data = data[data$taak == input$task, ]
@@ -57,7 +57,9 @@ function(input, output, session) {
     if(is.recursive(fetchedData())) {
       data = fetchedData()
       data = data[data$taak == input$task, ]
-      radioButtons("task_id", "selecteer taak id:", unique(data$task_id)) 
+      if(NROW(data) > 0) {
+        radioButtons("task_id", "selecteer taak id:", unique(data$task_id)) 
+      }
     }
   })
   
@@ -183,11 +185,12 @@ function(input, output, session) {
     hist(as.numeric(storedData[,2]))
     abline(v=percentielScoreAge(input$date, testDate, averageData$meanprop),col="red")
   })
-
   output$report <- downloadHandler(
-    # For PDF output, change this to "report.pdf"
-    filename = paste("report", toString(input$file_type),sep="."),
-
+    filename = function() {
+      paste('my-report', sep = '.', switch(
+        input$format, PDF = 'pdf', HTML = 'html'
+      ))
+    },
     content = function(file) {
       # Copy the report file to a temporary directory before processing it, in
       # case we don't have write permissions to the current working dir (which
@@ -224,15 +227,21 @@ function(input, output, session) {
       # Knit the document, passing in the `params` list, and eval it in a
       # child of the global environment (this isolates the code in the document
       # from the code in this app).
-
-      rmarkdown::render(
+      library(rmarkdown)
+      out <- render(
         tempReport, 
-        output_format = paste(toString(input$file_type), "document", sep="_"),
+        switch(
+          input$format,
+          PDF = pdf_document(), HTML = html_document()
+        ),
         output_file = file,
         params = params,
         envir = new.env(parent = globalenv()),
         quiet = FALSE
+
       )
+      
+      file.rename(out, file)
     }
   )
 }
