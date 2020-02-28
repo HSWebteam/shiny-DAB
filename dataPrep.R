@@ -1,7 +1,6 @@
-
 source("DABmodel.R")
-library(eeptools)
-library(gamlss)
+library("eeptools")
+library("gamlss")
 
 getData<-function(search){
   data
@@ -94,15 +93,15 @@ tScore <- function(birthDate, testDate, meanprop, task){
 }
 
 participantData <- function(gender, date){
-    return(
-        data.frame(
-          'Dossiernummer' = NA, 
-          'Geslacht' = gender, 
-          'Geboortedatum' = as.character(date, "%Y-%m-%d"),
-          'Naam' = NA,
-          check.names = FALSE
-        )
+  return(
+    data.frame(
+      'Dossiernummer' = NA, 
+      'Geslacht' = gender, 
+      'Geboortedatum' = as.character(date, "%Y-%m-%d"),
+      'Naam' = NA,
+      check.names = FALSE
     )
+  )
 }
 
 testData <- function(fetchedData, date) {
@@ -117,28 +116,28 @@ testData <- function(fetchedData, date) {
 }
 
 analizeData <- function(filteredData, date, task) {
-    averageData <- getAverage(filteredData)
-    averagePracticeData <- getAveragePractice(filteredData)
-    testDate = min(filteredData$created_at)
-    confidence = confidenceInterval(date, testDate, averageData$meanprop, task)
-    tscore = tScore(date, testDate, averageData$meanprop, task)
-    percentiel = percentielScoreAge(date, testDate, averageData$meanprop)
-    description <- data.frame(
-      min = c(0,5,10,25,75,90,95), 
-      max = c(5,10,25,75,90,95,100), 
-      description = c('Zeer laag', 'Laag', 'Beneden gemiddeld',
-        'Gemiddeld', 'Boven gemiddeld', 'Hoog','Zeer hoog'))
-    
-    description = description[description$min < percentiel, ]
-    description = description[description$max > percentiel, ]
+  averageData <- getAverage(filteredData)
+  averagePracticeData <- getAveragePractice(filteredData)
+  testDate = min(filteredData$created_at)
+  confidence = confidenceInterval(date, testDate, averageData$meanprop, task)
+  tscore = tScore(date, testDate, averageData$meanprop, task)
+  percentiel = percentielScoreAge(date, testDate, averageData$meanprop)
+  description <- data.frame(
+    min = c(0,5,10,25,75,90,95), 
+    max = c(5,10,25,75,90,95,100), 
+    description = c('Zeer laag', 'Laag', 'Beneden gemiddeld',
+      'Gemiddeld', 'Boven gemiddeld', 'Hoog','Zeer hoog'))
+  
+  description = description[description$min < percentiel, ]
+  description = description[description$max > percentiel, ]
 
-    return(data.frame(
-        'Oefen score' = averagePracticeData$meanprop_practice * 100,	
-        'Ruwe score' = averageData$meanprop * 100,
-        'Bi' = paste(confidence, collapse=' - '),
-        'Percentiel score' = percentiel,
-        'T-score' = tscore[1],
-        'T-score interval' = paste(tscore[2],tscore[3], sep=' - '),
-        'kwalitatieve beschrijving' = description$description, check.names=FALSE)
-    )
+  return(data.frame(
+    'Oefen score' = averagePracticeData$meanprop_practice * 100,	
+    'Ruwe score' = averageData$meanprop * 100,
+    'Bi' = paste(confidence, collapse=' - '),
+    'Percentiel score' = percentiel,
+    'T-score' = tscore[1],
+    'T-score interval' = paste(tscore[2],tscore[3], sep=' - '),
+    'kwalitatieve beschrijving' = description$description, check.names=FALSE)
+  )
 }
