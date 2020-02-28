@@ -25,7 +25,7 @@ fittedPlot(out,x=D$lftd)
 
 plot(out)
 pdf('Lion1_Sample.pdf')
-centiles(out,D$lftd,cent=c(1,5,10,25,50,75,90,95,99),xlab='Leeftijd in dagen',pch=1,ylab='Gemiddelde score',main="Leeuwenspel: percentielcurves")
+centiles(out,D$lftd,cent=c(1,5,10,25,50,75,90,95,99),xlab='Leeftijd in dagen',pch=1,ylab='Score (Ln goed-fout verhouding)',main="Leeuwenspel: percentielcurves")
 dev.off()
 
 # onderstaande functie pcs() geeft voor leeftijd x (in dagen) en gem. score y de proportie kinderen van dezelfde leeftijd die een lagere gem. score hebben
@@ -66,7 +66,7 @@ nu<-predict(out,what='nu',newdata=newx,type='response',data=D)
 tau<-predict(out,what='tau',newdata=newx,type='response',data=D)
 a<-seq(round(min(LOscore),0),round(max(LOscore),0),.01)
 b<-dJSU(a,mu,sigma,nu,tau)
-plot(a,b,type='l',ylim=c(0.01,max(b)),main='De verdeling gegeven leeftijd in dagen',xlab='de log goed-fout verhouding',ylab='kansdichtheid',las=1)
+plot(a,b,type='l',ylim=c(0.01,max(b)),main='De verdeling gegeven leeftijd in dagen',xlab='Score (Ln goed-fout verhouding)',ylab='kansdichtheid',las=1)
 abline(v=log(y/(1-y)),col='red')}
 
 dplot(ld,.3)
@@ -110,12 +110,21 @@ tscore(ld,.3)
 grafiek<-function(x,y){
 pdf('Lion_Score.pdf')
 par(las=1)
-centiles(out,D$lftd/365,legend=FALSE,cent=c(5,10,25,50,75,90,95),xlim=c(6,13),xaxp=c(6,13,7),col.centiles=c(1,3,4,5,6,7,'orange'),lwd.centiles=1.5,xlab='Leeftijd in jaren',ylab='Log goed-fout verhouding',main='Leeuwenspel: percentielcurves',points=F)
+centiles(out,D$lftd/365,legend=FALSE,
+         cent=c(5,10,25,50,75,90,95),
+         xlim=c(6,13),xaxp=c(6,13,7),
+         ylim=c(-4,4),yaxp=c(-4,4,4),
+         col.centiles=c(1,3,4,5,6,7,'orange'),
+         lwd.centiles=1.5,
+         xlab='Leeftijd in jaren',
+         ylab='Score (Ln goed-fout verhouding)',
+         main='Leeuwenspel: percentielcurves',
+         points=F)
 abline(h=log(y/(1-y)),col='lightgray')
 abline(v=x/365,col='lightgray')
 #abline(h=seq(-3,3,1/2),col='lightgray')
 #abline(v=seq(6,13,1/2),col='lightgray')
-legend(11.8,-1.2,legend=c('95','90','75','50','25','10','5'),col=c('orange',7,6,5,4,3,1),lwd=1.5,bty='o',bg='white')
+legend(11.8,-1.35,legend=c('95','90','75','50','25','10','5'),col=c('orange',7,6,5,4,3,1),lwd=1.5,bty='o',bg='white')
 points(x/365,log(y/(1-y)),pch=19,col="red")
 dev.off()}
 

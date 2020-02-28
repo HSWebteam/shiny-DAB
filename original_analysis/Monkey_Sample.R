@@ -1,7 +1,8 @@
 # veranderingen!!!
 ###################
-# 1. 
-# 2. 
+# 1. functie pcs is aangepast. Deze heeft nu ook een kwalificatie als output.
+# 2. log goud-fout verhouding is doorgevoerd
+# 3. nieuwe functie grafiek()
 ###################
 
 library(gamlss)
@@ -24,7 +25,7 @@ fittedPlot(out,x=D$lftd)
 
 plot(out)
 pdf('Monkey_Sample.pdf')
-centiles(out,D$lftd,cent=c(1,5,10,25,50,75,90,95,99),xlab='Leeftijd in dagen',pch=1,ylab='Log goed-fout verhouding',main="Apenspel: percentielcurves")
+centiles(out,D$lftd,cent=c(1,5,10,25,50,75,90,95,99),xlab='Leeftijd in dagen',pch=1,ylab='Score (Ln goed-fout verhouding)',main="Apenspel: percentielcurves")
 dev.off()
 
 # onderstaande functie pcs() geeft voor leeftijd x (in dagen) en gem. score y het percentage kinderen van dezelfde leeftijd die een lagere gem. score hebben
@@ -48,7 +49,7 @@ cat(pcy,pcw)}
 # hieronder wordt met de geboortedatum (gebdat) en de testdatum (testdat) de leeftijd in dagen berekend (ld)
 
 gebdat<-as.Date('2012-02-11')
-testdat<-as.Date('2019-02-11')
+testdat<-as.Date('2019-11-11')
 ld<-as.numeric(age_calc(gebdat,enddate=testdat,units='days'))
 
 # hieronder de berekening van het percentage kinderen van leefdtijd ld die een lagere gem. score hebben dan .3 en de bijbehorende kwalificatie
@@ -65,7 +66,7 @@ nu<-predict(out,what='nu',newdata=newx,type='response',data=D)
 tau<-predict(out,what='tau',newdata=newx,type='response',data=D)
 a<-seq(round(min(LOscore),0),round(max(LOscore),0),.01)
 b<-dJSU(a,mu,sigma,nu,tau)
-plot(a,b,type='l',ylim=c(0.01,max(b)),main='De verdeling gegeven leeftijd in dagen',xlab='de log goed-fout verhouding',ylab='kansdichtheid',las=1)
+plot(a,b,type='l',ylim=c(0.01,max(b)),main='De verdeling gegeven leeftijd in dagen',xlab='Score (Ln goed-fout verhouding)',ylab='kansdichtheid',las=1)
 abline(v=log(y/(1-y)),col='red')}
 
 dplot(ld,.3)
@@ -109,7 +110,16 @@ tscore(ld,.3)
 grafiek<-function(x,y){
 pdf('Monkey_Score.pdf')
 par(las=1)
-centiles(out,D$lftd/365,legend=FALSE,cent=c(5,10,25,50,75,90,95),xlim=c(6,13),xaxp=c(6,13,7),col.centiles=c(1,3,4,5,6,7,'orange'),lwd.centiles=1.5,xlab='Leeftijd in jaren',ylab='Log goed-fout verhouding',main='Apenspel: percentielcurves',points=F)
+centiles(out,D$lftd/365,legend=FALSE,
+         cent=c(5,10,25,50,75,90,95),
+         xlim=c(6,13),
+         xaxp=c(6,13,7),
+         col.centiles=c(1,3,4,5,6,7,'orange'),
+         lwd.centiles=1.5,
+         xlab='Leeftijd in jaren',
+         ylab='Score (Ln goed-fout verhouding)',
+         main='Apenspel: percentielcurves',
+         points=F)
 abline(h=log(y/(1-y)),col='lightgray')
 abline(v=x/365,col='lightgray')
 #abline(h=seq(-3,3,1/2),col='lightgray')
