@@ -8,7 +8,7 @@ library(gamlss)
 library(eeptools)
 
 
-D<-read.table('Lion1_Sample.dat',header=T)
+D<-read.table('../original_analysis/Lion1_Sample.dat',header=T)
 names(D)<-c('lftd','score','sekse','noord','oost','zuid','west','regio','lftj','psw')
 LOscore<-log(D$score/(1-D$score))
 
@@ -38,7 +38,7 @@ identical(out, lionModel, ignore.environment = TRUE)
 # calculate the Monkey Model
 #####
 
-D<-read.table('Monkey_Sample.dat',header=T)
+D<-read.table('../original_analysisMonkey_Sample.dat',header=T)
 names(D)<-c('lftd','score','sekse','noord','oost','zuid','west','regio','lftj','psw')
 LOscore<-log(D$score/(1-D$score))
 
