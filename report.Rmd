@@ -1,6 +1,8 @@
 ---
 title: "Norm score report"
 params:
+  groupname: NA
+  taskname: NA
   path: NA
   storedModel: NA
   storedData: NA
@@ -14,16 +16,22 @@ params:
 ---
 
 ```{r echo  = FALSE}
+
+h3(paste(params$groupname, params$taskname, sep=' - '))
+
+```
+
+```{r echo  = FALSE}
 library(knitr)
-kable(params$participantData, caption = 'Participant Info')
-kable(params$testData, caption = 'Test Info')
-kable(params$analizeData, caption = 'Analysis')
+kable(params$participantData)
+kable(params$testData)
+kable(params$analizeData)
 
 ```
 
 ```{r echo  = FALSE}
 source(paste(params$path, "plots.R", sep = '/'))
-percetielPlot(params$storedData, params$percentielScore)
+# percetielPlot(params$storedData, params$percentielScore)
 ```
 
 ```{r echo  = FALSE}
@@ -31,5 +39,5 @@ growthPlot(params$storedModel, params$storedData, params$ageDays, params$meanpro
 ```
 
 ```{r echo  = FALSE}
-densityScoreAgePlot(params$densityData)
+# densityScoreAgePlot(params$densityData)
 ```

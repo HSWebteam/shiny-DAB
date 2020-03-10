@@ -100,8 +100,7 @@ ageAtTestDay<-function(birthDate, testDate){
 ageString<-function(birthDate, testDate){
   years <- as.integer(ageAtTestDay(birthDate, testDate)/365)
   months<-as.integer((ageAtTestDay(birthDate, testDate)- 365*years)/30)
-  days<-as.integer(ageAtTestDay(birthDate, testDate)- 365*years - 30*months)
-  paste(toString(years), 'jr', toString(months), 'mnd', toString(days), 'dgn')
+  paste(toString(years), 'jr', toString(months), 'mnd')
 }
 
 percentielScoreAge<-function(birthDate, testDate, meanprop, task){
@@ -136,13 +135,13 @@ tScore <- function(birthDate, testDate, meanprop, task){
   }
 }
 
-participantData <- function(gender, date){
+participantData <- function(casenumber, gender, date, naam){
   return(
     data.frame(
-      'Dossiernummer' = NA, 
+      'Casenumber' = toString(casenumber), 
       'Geslacht' = gender, 
       'Geboortedatum' = as.character(date, "%Y-%m-%d"),
-      'Naam' = NA,
+      'Naam' = toString(naam),
       check.names = FALSE
     )
   )
@@ -161,6 +160,7 @@ testData <- function(fetchedData, date) {
 
 analizeData <- function(filteredData, date, task) {
   averageData <- getAverage(filteredData)
+  practiceScore <- getPracticeScore(filteredData)
   averagePracticeData <- getAveragePractice(filteredData)
   testDate = min(filteredData$created_at)
   confidence = confidenceInterval(date, testDate, averageData$meanprop, task)
@@ -173,15 +173,17 @@ analizeData <- function(filteredData, date, task) {
       'Gemiddeld', 'Boven gemiddeld', 'Hoog','Zeer hoog'))
   
   description = description[description$min < percentiel, ]
-  description = description[description$max > percentiel, ]
+  description = description[description$max >= percentiel, ]
 
   return(data.frame(
-    'Oefen score' = averagePracticeData$meanprop_practice * 100,	
-    'Ruwe score' = averageData$meanprop * 100,
-    'Bi' = paste(confidence, collapse=' - '),
-    'Percentiel score' = percentiel,
-    'T-score' = tscore[1],
-    'T-score interval' = paste(tscore[2],tscore[3], sep=' - '),
-    'kwalitatieve beschrijving' = description$description, check.names=FALSE)
+    'Oefen score' = round(practiceScore$practice_items_correct, 0),
+    'Ruwe score' = round(averageData$meanprop * 100, 0),
+    'BI 95%' = paste(confidence, collapse='-'),
+    'Percentiel score' = round(percentiel, 0),
+    'T-score' = round(tscore[1], 0),
+    'T-score BI 95%' = paste(round(tscore[2], 0), round(tscore[3], 0), sep='-'),
+    'kwalitatieve beschrijving' = description$description, 
+    check.names=FALSE
+    )
   )
 }

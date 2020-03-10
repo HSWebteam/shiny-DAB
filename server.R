@@ -46,8 +46,28 @@ function(input, output, session) {
        NROW(data) == 0) {
         return(FALSE)
     }
-    data = data[data$taak == input$task, ]
-    data = data[data$task_id == input$task_id, ]
+    if(length(input$task) == 0) {
+      return(FALSE)
+    }
+    
+    if(input$task == '1') {
+      data = data[data$taak == '1', ]
+    }
+    
+    if(input$task == '2') {
+      data = data[data$taak == '2', ]
+      data = data[data$theme == 'text_theme', ]
+    }
+    
+    if(input$task == '3') {
+      data = data[data$taak == '2', ]
+      data = data[data$theme == 'picture_theme', ]
+    }
+    
+    if(length(unique(data$task_id)) > 1 ) {
+      data = data[data$task_id == input$task_id, ]
+    }
+    
     return(data[order(
       data$task_id,
       data$participant_id),])
@@ -107,6 +127,20 @@ function(input, output, session) {
     }
   })
   
+  output$tableGeneral <- renderTable({
+    if(is.null(dim(filteredData())) ||
+       NROW(filteredData()) == 0) {
+      return('Geen data gevonden.')
+    }
+   
+    participantData(
+      unique(filteredData()$participant_case_number), 
+      input$gender, 
+      as.character(input$date, "%Y-%m-%d"),
+      unique(filteredData()$participant_name)
+    )
+  })
+
   output$tableTestInfo <- renderTable({
     if(is.null(dim(filteredData())) ||
        NROW(filteredData()) == 0) {
@@ -115,16 +149,14 @@ function(input, output, session) {
     testData(filteredData(), input$date)
   })
   
-  
   output$tableScore <- renderTable({
     if(is.null(dim(filteredData())) ||
        NROW(filteredData()) == 0) {
       return('Geen data gevonden.')
     }
-  
-    averageData <- getAverage(filteredData())
+
     analizeData(filteredData(), input$date, input$task)
-  }, width = "100%")
+  }, width = "100%", bordered = FALSE, align = 'c', digits = 0)
     
   output$plotPercentiel <- renderPlot({
     if(is.null(dim(filteredData())) ||
@@ -179,7 +211,7 @@ function(input, output, session) {
     testDate = min(filteredData()$created_at)
     
     ageDays = ageAtTestDay(input$date, testDate)
-    data = density(ageDays, averageData$meanprop)
+    data = density(ageDays, averageData$meanprop, input$task)
     densityScoreAgePlot(data)
   })
   
@@ -219,11 +251,17 @@ function(input, output, session) {
     averageData <- getAverage(filteredData())
     testDate = min(filteredData()$created_at)
     hist(as.numeric(storedData[,2]))
-    abline(v=percentielScoreAge(input$date, testDate, averageData$meanprop),col="red")
+    abline(v=percentielScoreAge(input$date, testDate, averageData$meanprop, input$task),col="red")
   })
+  
   output$report <- downloadHandler(
     filename = function() {
-      paste('my-report', sep = '.', switch(
+      groupname <- unique(filteredData()$group_name)
+      taskname <- names(tasksArray()[as.numeric(input$task)])
+      caseNumber <- unique(filteredData()$participant_case_number)
+      tempFilename <- paste('report', caseNumber, groupname, taskname, sep = '-')
+      tempFilename <- gsub("[[:punct:]]\\s+","_", tempFilename)
+      paste(tempFilename, sep = '.', switch(
         input$format, PDF = 'pdf', HTML = 'html'
       ))
     },
@@ -231,6 +269,11 @@ function(input, output, session) {
       # Copy the report file to a temporary directory before processing it, in
       # case we don't have write permissions to the current working dir (which
       # can happen when deployed).
+      
+      groupname <- unique(filteredData()$group_name)
+      taskname <- names(tasksArray()[as.numeric(input$task)])
+      caseNumber <- unique(filteredData()$participant_case_number)
+      
       tempReport <- file.path(tempdir(), "report.Rmd")
       file.copy("report.Rmd", tempReport, overwrite = TRUE)
       
@@ -248,6 +291,8 @@ function(input, output, session) {
       ageDays = ageAtTestDay(input$date, testDate)
       # Set up parameters to pass to Rmd document
       params <- list(
+        groupname = groupname,
+        taskname = taskname,
         path = getwd(),
         storedModel = storedModel,
         storedData = storedData,
