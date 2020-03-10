@@ -1,36 +1,48 @@
 library(gamlss)
 library(eeptools)
 
-pcs <- function(ageDays,score){
-    # fetch saved model and data
+pcs <- function(ageDays,score, task){
+  # fetch saved model and data
+  if(task == '1') {
     storedModel <- readRDS(file = paste(getwd(), "models/lionModel.rds", sep = '/'))
     storedData <- readRDS(file = paste(getwd(), "models/lionData.rds", sep = '/'))
+  }
+  if(task == '2' || task == '3') {
+    storedModel <- readRDS(file = paste(getwd(), "models/monkeyModel.rds", sep = '/'))
+    storedData <- readRDS(file = paste(getwd(), "models/monkeyData.rds", sep = '/'))
+  }
 
-    newx <- data.frame(lftd=ageDays)
-    mu <- predict(storedModel, what='mu', newdata=newx, type='response', data=storedData)
-    sigma <- predict(storedModel, what='sigma', newdata=newx, type='response', data=storedData)
-    nu <- predict(storedModel, what='nu', newdata=newx, type='response', data=storedData)
-    tau <- predict(storedModel, what='tau', newdata=newx, type='response', data=storedData)
-    round(pJSU(log(score/(1-score)), mu, sigma, nu, tau)*100, 1)
+  newx <- data.frame(lftd=ageDays)
+  mu <- predict(storedModel, what='mu', newdata=newx, type='response', data=storedData)
+  sigma <- predict(storedModel, what='sigma', newdata=newx, type='response', data=storedData)
+  nu <- predict(storedModel, what='nu', newdata=newx, type='response', data=storedData)
+  tau <- predict(storedModel, what='tau', newdata=newx, type='response', data=storedData)
+  round(pJSU(log(score/(1-score)), mu, sigma, nu, tau)*100, 1)
 }
 
-density <- function(ageDays,score){
-    # fetch saved model and data
+density <- function(ageDays,score, task){
+  # fetch saved model and data
+  if(task == '1') {
     storedModel <- readRDS(file = paste(getwd(), "models/lionModel.rds", sep = '/'))
     storedData <- readRDS(file = paste(getwd(), "models/lionData.rds", sep = '/'))
-    LOscore<-log(storedData$score/(1-storedData$score))
-    
+  }
+  if(task == '2' || task == '3') {
+    storedModel <- readRDS(file = paste(getwd(), "models/monkeyModel.rds", sep = '/'))
+    storedData <- readRDS(file = paste(getwd(), "models/monkeyData.rds", sep = '/'))
+  }
 
-    newx <- data.frame(lftd=ageDays)
-    mu <- predict(storedModel, what='mu', newdata=newx, type='response', data=storedData)
-    sigma <- predict(storedModel, what='sigma', newdata=newx, type='response', data=storedData)
-    nu <- predict(storedModel, what='nu', newdata=newx, type='response', data=storedData)
-    tau <- predict(storedModel, what='tau', newdata=newx, type='response', data=storedData)
-    return(data.frame(
-      a = seq(round(min(LOscore), 0), round(max(LOscore), 0), .01),
-      b = dJSU(seq(round(min(LOscore), 0), round(max(LOscore), 0), .01), mu, sigma, nu, tau),
-      abline = log(score/(1-score)))
-    )
+  LOscore<-log(storedData$score/(1-storedData$score))
+
+  newx <- data.frame(lftd=ageDays)
+  mu <- predict(storedModel, what='mu', newdata=newx, type='response', data=storedData)
+  sigma <- predict(storedModel, what='sigma', newdata=newx, type='response', data=storedData)
+  nu <- predict(storedModel, what='nu', newdata=newx, type='response', data=storedData)
+  tau <- predict(storedModel, what='tau', newdata=newx, type='response', data=storedData)
+  return(data.frame(
+    a = seq(round(min(LOscore), 0), round(max(LOscore), 0), .01),
+    b = dJSU(seq(round(min(LOscore), 0), round(max(LOscore), 0), .01), mu, sigma, nu, tau),
+    abline = log(score/(1-score)))
+  )
 }
 
 biLion <- function(ageDays,score){
@@ -63,6 +75,7 @@ biMonkey <- function(ageDays, score) {
 
 tscoreLion <- function(ageDays, score){
   # fetch saved model and data
+  
   storedModel <- readRDS(file = paste(getwd(), "models/lionModel.rds", sep = '/'))
   storedData <- readRDS(file = paste(getwd(), "models/lionData.rds", sep = '/'))
   

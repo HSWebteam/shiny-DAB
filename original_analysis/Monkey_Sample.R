@@ -31,6 +31,8 @@ dev.off()
 # onderstaande functie pcs() geeft voor leeftijd x (in dagen) en gem. score y het percentage kinderen van dezelfde leeftijd die een lagere gem. score hebben
 
 pcs<-function(x,y){
+  x = 4593
+  y = 0.5283333
 newx<-data.frame(lftd=x)
 mu<-predict(out,what='mu',newdata=newx,type='response',data=D)
 sigma<-predict(out,what='sigma',newdata=newx,type='response',data=D)
@@ -48,13 +50,18 @@ cat(pcy,pcw)}
 
 # hieronder wordt met de geboortedatum (gebdat) en de testdatum (testdat) de leeftijd in dagen berekend (ld)
 
-gebdat<-as.Date('2012-02-11')
-testdat<-as.Date('2019-11-11')
+# gebdat<-as.Date('2012-02-11')
+# testdat<-as.Date('2019-11-11')
+
+gebdat<-as.Date('2007-08-09')
+testdat<-as.Date('2020-03-06')
 ld<-as.numeric(age_calc(gebdat,enddate=testdat,units='days'))
 
 # hieronder de berekening van het percentage kinderen van leefdtijd ld die een lagere gem. score hebben dan .3 en de bijbehorende kwalificatie
 
-pcs(ld,.3)
+pcs(ld,.64)
+pcs(4593,0.5283333)
+
 
 # hieronder de functie voor de density plot
 
@@ -69,7 +76,7 @@ b<-dJSU(a,mu,sigma,nu,tau)
 plot(a,b,type='l',ylim=c(0.01,max(b)),main='De verdeling gegeven leeftijd in dagen',xlab='Score (Ln goed-fout verhouding)',ylab='kansdichtheid',las=1)
 abline(v=log(y/(1-y)),col='red')}
 
-dplot(ld,.3)
+dplot(ld,.64)
 
 # hieronder de functie voor het betrouwbaarheidsinterval voor de proportie correct score
 
@@ -85,7 +92,7 @@ if (z[1]<0){z[1]<-0}
 if (z[2]>1){z[2]<-1}
 round(z,3)}
 
-bi(ld,.3)
+bi(ld,.64)
 
 # hieronder de functie voor de t-score en bijbehorende 95% betrouwbaarheidsinterval
 
@@ -103,7 +110,7 @@ if (trunc(x/365,0)==11){ts<-c(tr,tr-1.96*10*sqrt(1-.81),tr+1.96*10*sqrt(1-.81))}
 if (trunc(x/365,0)==12){ts<-c(tr,tr-1.96*10*sqrt(1-.84),tr+1.96*10*sqrt(1-.84))}
 round(ts,1)}
 
-tscore(ld,.3)
+tscore(ld,.64)
 
 # hieronder de functie voor het plotten van iemands score gegeven leeftijd t.o.v. de percentielcurves
 
