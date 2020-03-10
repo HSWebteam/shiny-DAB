@@ -38,7 +38,7 @@ identical(out, lionModel, ignore.environment = TRUE)
 # calculate the Monkey Model
 #####
 
-D<-read.table('../original_analysisMonkey_Sample.dat',header=T)
+D<-read.table('../original_analysis/Monkey_Sample.dat',header=T)
 names(D)<-c('lftd','score','sekse','noord','oost','zuid','west','regio','lftj','psw')
 LOscore<-log(D$score/(1-D$score))
 
