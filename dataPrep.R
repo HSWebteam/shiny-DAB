@@ -3,7 +3,6 @@ library("eeptools")
 library("gamlss")
 
 getData<-function(search){
-  data
   query <- parseQueryString(search)
   if(length(query) == 0) {
     return(NA)
@@ -20,32 +19,39 @@ getData<-function(search){
     stop("API did not return json", call. = FALSE)
   }
   
-  data <- jsonlite::fromJSON(content(resp, "text", encoding = "UTF-8"), simplifyVector = TRUE)
-  
-  col_headings <- c("project_name", "organisation_name", "group_name", "participant_case_number",
-                    "participant_symbol", "participant_color", "participant_token", "taak", "#levels", "#items",
-                    "language", "theme", "matrix_size", "id", "task_id", "participant_id", "level", "item",
-                    "question_number", "correct_answer", "correct_matrix_number", "response",
-                    "response_matrix_number", "response_time", "score", "created_at", "updated_at", "deleted_at")
+  responseData <- jsonlite::fromJSON(content(resp, "text", encoding = "UTF-8"), simplifyVector = TRUE)
 
-  if(!is.atomic(list(data["data"]))) {
+  col_headings <- c("project_name", "organisation_name", "group_name", "participant_case_number", 
+                    "participant_name", "participant_symbol", "participant_color", 
+                    "participant_token", "taak", "#levels", "#items", "language", "theme", 
+                    "matrix_size", "id", "task_id", "participant_id", "level", "item",
+                    "question_number", "correct_answer", "correct_matrix_number", 
+                    "response", "response_matrix_number", "response_time",
+                    "score", "created_at", "updated_at", "deleted_at")
+
+  if(!is.atomic(list(responseData['results']))) {
     return  
   } 
   
   data<-data.frame(
     matrix(
       unlist(
-        data["data"], 
+        responseData['results'], 
         use.names = TRUE), 
       ncol = length(col_headings), 
       byrow = FALSE),
     check.rows = TRUE, 
     stringsAsFactors = FALSE)
   names(data) <- col_headings
+  return(data)
+}
 
   return(data[order(
     data$task_id,
     data$participant_id),])
+
+tasksArray<-function(){
+  c('Leeuwen' = 1, 'Apen tekst' = 2, 'Apen plaatjes' = 3)
 }
 
 ageAtTestDay<-function(birthDate, testDate){

@@ -64,7 +64,10 @@ function(input, output, session) {
   })
   
   output$taskSelector <- renderUI({
-    radioButtons("task", "selecteer taak:", c('Leeuwen' = 1, 'Apen' = 2)) 
+    radioButtons(
+      "task", 
+      "selecteer taak:", 
+      tasksArray())
   })
   
   output$tableGeneral <- renderTable({
