@@ -57,8 +57,10 @@ function(input, output, session) {
     if(is.recursive(fetchedData())) {
       data = fetchedData()
       data = data[data$taak == input$task, ]
-      if(NROW(data) > 0) {
-        radioButtons("task_id", "selecteer taak id:", unique(data$task_id)) 
+      if(NROW(data) > 0 ) {
+        if(length(unique(data$task_id)) > 1 ) {
+          radioButtons("task_id", "selecteer taak id:", unique(data$task_id)) 
+        }
       }
     }
   })
@@ -101,7 +103,7 @@ function(input, output, session) {
     if(input$task == '1') {
       storedData <- readRDS("models/lionData.rds")
     }
-    if(input$task == '2') {
+    if(input$task == '2' || input$task == '3') {
       storedData <- readRDS("models/monkeyData.rds")
     }
     averageData <- getAverage(filteredData())
@@ -119,7 +121,7 @@ function(input, output, session) {
       storedData <- readRDS("models/lionData.rds")
       storedModel <- readRDS("models/lionModel.rds")
     }
-    if(input$task == '2') {
+    if(input$task == '2' || input$task == '3') {
       storedData <- readRDS("models/monkeyData.rds")
       storedModel <- readRDS("models/monkeyModel.rds")
     }
@@ -139,7 +141,7 @@ function(input, output, session) {
     if(input$task == '1') {
       storedData <- readRDS("models/lionData.rds")
     }
-    if(input$task == '2') {
+    if(input$task == '2' || input$task == '3') {
       storedData <- readRDS("models/monkeyData.rds")
     }
     averageData <- getAverage(filteredData())

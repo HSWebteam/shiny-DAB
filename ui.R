@@ -12,10 +12,10 @@ fluidPage(
                 min = Sys.Date() - years(15), max = Sys.Date() - years(5),
                 value = Sys.Date() - years(6)
             ),
-            radioButtons('gender', 'Sekse:',
+            radioButtons('gender', 'Geslacht:',
                          c('n.v.t' = 'na',
-                           'Mannelijk' = 'male',
-                           'Vrouwelijk' = 'female')
+                           'Mannelijk' = 'man',
+                           'Vrouwelijk' = 'vrouw')
             ),
             radioButtons('region', 'Regio:',
                          c('n.v.t' = 'na',
