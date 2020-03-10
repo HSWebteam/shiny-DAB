@@ -72,8 +72,26 @@ function(input, output, session) {
       tasksArray())
   })
   
-  output$tableGeneral <- renderTable({
-    participantData(input$gender,as.character(input$date, "%Y-%m-%d"))
+  output$subtitle <- renderText({
+    if(is.null(dim(filteredData())) ||
+       NROW(filteredData()) == 0) {
+      return()
+    }
+    groupname <- unique(filteredData()$group_name)
+    taskname <- names(tasksArray()[as.numeric(input$task)])
+    title <- paste(groupname, taskname, sep = '-')
+    paste("<font color=\"#000000\"><h3>", title, "</h3></font>", sep = '')
+  })
+  
+  output$warning <- renderText({
+    if(is.null(dim(filteredData())) ||
+       NROW(filteredData()) == 0) {
+      return()
+    }
+    status <- subset(filterTaskStatus(), task_id == unique(filteredData()$task_id))
+    if(status$finished != 1) {
+      "<font color=\"#FF0000\"><b>Let op! participant heeft deze taak nog niet afgerond</b></font>"
+    }
   })
   
   output$tableTestInfo <- renderTable({

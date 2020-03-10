@@ -30,6 +30,8 @@ fluidPage(
         ),
         mainPanel(
             h1("Report"),
+            htmlOutput("subtitle"),
+            htmlOutput("warning"),
             tableOutput("tableGeneral"),
             tableOutput("tableTestInfo"),
             tableOutput("tableScore"),
