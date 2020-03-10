@@ -32,10 +32,14 @@ function(input, output, session) {
     getData(session$clientData$url_search)
   })
 
+  fetchedTaskStatus <- reactive({
+    getTaskStatus(session$clientData$url_search)
+  })
+  
   search <- reactive({
     session$clientData$url_search
   })
-  
+
   filteredData <- function() {
     data = fetchedData()
     if(is.null(dim(data)) ||
@@ -49,9 +53,18 @@ function(input, output, session) {
       data$participant_id),])
   }
   
-  output$tempText <- renderText({
-    averageData <- getAverage(filteredData())
-  })
+  filterTaskStatus <- function(){
+    data = fetchedTaskStatus()
+    if(is.null(dim(data)) ||
+       NROW(data) == 0) {
+      return(FALSE)
+    }
+    if(length(input$task) == 0) {
+      return(FALSE)
+    }
+
+    return(data)
+  }
   
   output$taskIdSelector <- renderUI({
     if(is.recursive(fetchedData())) {

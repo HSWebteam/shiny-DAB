@@ -46,9 +46,47 @@ getData<-function(search){
   return(data)
 }
 
-  return(data[order(
-    data$task_id,
-    data$participant_id),])
+
+getTaskStatus<-function(search){
+  query <- parseQueryString(search)
+  if(length(query) == 0) {
+    return(NA)
+  }
+  if(query$returnurl == 'https://taken.vagrant') {
+    httr::set_config(config(ssl_verifypeer = 0L))
+  }
+  resp<-GET(query$returnurl, path = 'api/task', query = list(token = query$token))
+
+  if (resp$status_code != "200") {
+    stop("API did not returned error", call. = FALSE)
+  }
+  if (http_type(resp) != "application/json") {
+    stop("API did not return json", call. = FALSE)
+  }
+  
+  responseData <- jsonlite::fromJSON(
+    content(resp, "text", encoding = "UTF-8"), 
+    simplifyVector = TRUE
+  )
+  
+  col_headings <- c("task_id", "finished")
+  if(!is.atomic(list(responseData['finised']))) {
+    return  
+  } 
+  data<-data.frame(
+    matrix(
+      unlist(
+        responseData['finised'], 
+        use.names = TRUE), 
+      ncol = length(col_headings),
+      byrow = FALSE),
+    check.rows = TRUE,
+    stringsAsFactors = FALSE)
+    
+  names(data) <- col_headings
+  return(data)
+}
+
 
 tasksArray<-function(){
   c('Leeuwen' = 1, 'Apen tekst' = 2, 'Apen plaatjes' = 3)
