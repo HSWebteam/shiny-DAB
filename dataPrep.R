@@ -60,11 +60,11 @@ ageString<-function(birthDate, testDate){
   paste(toString(years), 'jr', toString(months), 'mnd', toString(days), 'dgn')
 }
 
-percentielScoreAge<-function(birthDate, testDate, meanprop){
+percentielScoreAge<-function(birthDate, testDate, meanprop, task){
   if(is.null(meanprop)) {
     return(FALSE)
   }
-  pcs(ageAtTestDay(birthDate, testDate), meanprop)
+  pcs(ageAtTestDay(birthDate, testDate), meanprop, task)
 }
 
 confidenceInterval <- function(birthDate, testDate, meanprop, task){
@@ -75,7 +75,7 @@ confidenceInterval <- function(birthDate, testDate, meanprop, task){
   if(task == '1') {
     return(biLion(ageAtTestDay(birthDate, testDate), meanprop))
   }
-  if(task == '2') {
+  if(task == '2' || task == '3') {
     return(biMonkey(ageAtTestDay(birthDate, testDate), meanprop))
   }
 }
@@ -84,10 +84,10 @@ tScore <- function(birthDate, testDate, meanprop, task){
   if(is.null(meanprop)) {
     return(FALSE)
   }
-  if(task == 1) {
+  if(task == '1') {
     return(tscoreLion(ageAtTestDay(birthDate, testDate), meanprop))
   }
-  if(task == 2) {
+  if(task == '2' || task == '3') {
     return(tscoreMonkey(ageAtTestDay(birthDate, testDate), meanprop))
   }
 }
@@ -121,7 +121,7 @@ analizeData <- function(filteredData, date, task) {
   testDate = min(filteredData$created_at)
   confidence = confidenceInterval(date, testDate, averageData$meanprop, task)
   tscore = tScore(date, testDate, averageData$meanprop, task)
-  percentiel = percentielScoreAge(date, testDate, averageData$meanprop)
+  percentiel = percentielScoreAge(date, testDate, averageData$meanprop, task)
   description <- data.frame(
     min = c(0,5,10,25,75,90,95), 
     max = c(5,10,25,75,90,95,100), 

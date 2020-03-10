@@ -205,12 +205,11 @@ function(input, output, session) {
         storedModel <- readRDS("models/lionModel.rds")
         storedData <- readRDS("models/lionData.rds")
       }
-      if(input$task == '2') {
+      if(input$task == '2' || input$task == '3') {
         storedModel <- readRDS("models/monkeyModel.rds")
         storedData <- readRDS("models/monkeyData.rds")
       }
       ageDays = ageAtTestDay(input$date, testDate)
-      
       # Set up parameters to pass to Rmd document
       params <- list(
         path = getwd(),
@@ -218,8 +217,16 @@ function(input, output, session) {
         storedData = storedData,
         ageDays = ageDays,
         meanproportion = averageData$meanprop,
-        percentielScore = percentielScoreAge(input$date, testDate, averageData$meanprop),
-        participantData = participantData(input$gender, input$date),
+        percentielScore = percentielScoreAge(
+          input$date, 
+          testDate, 
+          averageData$meanprop, 
+          input$task),
+        participantData = participantData(
+          caseNumber, 
+          input$gender, 
+          input$date,
+          unique(filteredData()$participant_name)),
         testData = testData(filteredData(), input$date),
         analizeData = analizeData(filteredData(), input$date, input$task),
         densityData = density(ageDays, averageData$meanprop)
