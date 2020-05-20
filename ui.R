@@ -4,8 +4,17 @@ fluidPage(
     sidebarLayout(
         # Sidebar panel for inputs ----
         sidebarPanel(
-            uiOutput("taskIdSelector"),
+            uiOutput("analyzeSelector"),
             uiOutput("taskSelector"),
+            uiOutput("taskIdSelector"),
+            uiOutput("average"),
+            uiOutput("testdate"),
+            
+            uiOutput("taskSelectorDiscrepantie"),
+            uiOutput("taskIdSelectorDiscrepantie"),
+            uiOutput("averageDiscrepantie"),
+            uiOutput("testdateDiscrepantie"),
+            
             # verbatimTextOutput("tempText"),
             dateInput('date',
                 label = 'Geboortedatum: jjjj-mm-dd',
@@ -17,26 +26,33 @@ fluidPage(
                            'Mannelijk' = 'man',
                            'Vrouwelijk' = 'vrouw')
             ),
-            radioButtons('region', 'Regio:',
-                         c('n.v.t' = 'na',
-                           'Noord' = 'noord',
-                           'Oost' = 'oost',
-                           'Zuid' = 'zuid',
-                           'West' = 'west')
-            ),
+            # radioButtons('region', 'Regio:',
+            #              c('n.v.t' = 'na',
+            #                'Noord' = 'noord',
+            #                'Oost' = 'oost',
+            #                'Zuid' = 'zuid',
+            #                'West' = 'west')
+            # ),
             radioButtons('format', 'Selecteer bestandsformat:', c('PDF', 'HTML'),
                          inline = TRUE),
             downloadButton('report', 'Generate report')
         ),
         mainPanel(
             h1("Report"),
-            htmlOutput("subtitle"),
             htmlOutput("warning"),
             tableOutput("tableGeneral"),
+            
+            tableOutput("tableDiscrepantieAnalyse"),
+            
+            htmlOutput("subtitle"),
             tableOutput("tableTestInfo"),
             tableOutput("tableScore"),
             plotOutput("plotGrowth", width = 500, height = 400),
-            plotOutput("plotDensity", width = 500, height = 400)
+            
+            htmlOutput("subtitleDiscrepantie"),
+            tableOutput("tableTestInfoDiscrepantie"),
+            tableOutput("tableScoreDiscrepantie"),
+            plotOutput("plotGrowthDiscrepantie", width = 500, height = 400)
         )
     )
     # DT::dataTableOutput("table")

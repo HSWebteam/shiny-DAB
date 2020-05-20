@@ -20,22 +20,24 @@ densityScoreAgePlot <- function(data){
   abline(v=data$abline,col='red')
 }
 
-growthPlot<-function(model, data, ageDays, meanprop){
+growthPlot<-function(storedModel, storedData, ageDays, meanprop){
   if(is.null(meanprop)) {
     return(FALSE)
   }
 
-  centiles(model, data$lftd/365, legend=FALSE, 
+  centiles(storedModel, storedData$lftd/365, legend=FALSE, 
     cent=c(5,10,25,50,75,90,95),
-    xlim=c(6,13), xaxp=c(6,13,7), 
+    xlim=c(6,13),
+    ylim=c(-4, 6),
+    xaxp=c(6,13,7), 
     col.centiles=c(1,3,4,5,6,7,'orange'), 
     lwd.centiles=1.5, xlab='Leeftijd in jaren', 
     ylab='Score (Ln goed-fout verhouding)',
     main='Percentielcurves', 
     points=F)
-  abline(h = log(meanprop/(1-meanprop)), col = 'lightgray')
-  abline(v = ageDays/365, col = 'lightgray')
-  legend(6, 6.5, legend = c('95','90','75','50','25','10','5'),
+  abline(h = log(meanprop/(1-meanprop)), col = 'black', lty = 2)
+  abline(v = ageDays/365, col = 'black',  lty = 2)
+  legend(6, 6, legend = c('95','90','75','50','25','10','5'),
     col = c('orange',7,6,5,4,3,1), lwd=1.5, bty='o', bg='white')
   points(ageDays/365, log(meanprop/(1-meanprop)), pch=19, col="red")
 }

@@ -10,7 +10,7 @@ params:
   meanproportion: NA
   percentielScore: NA
   participantData: NA
-  testData: NA
+  taskData: NA
   analizeData: NA
   densityData: NA
 ---
@@ -24,7 +24,7 @@ h3(paste(params$groupname, params$taskname, sep=' - '))
 ```{r echo  = FALSE}
 library(knitr)
 kable(params$participantData)
-kable(params$testData)
+kable(params$taskData)
 kable(params$analizeData)
 
 ```
