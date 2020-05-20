@@ -255,7 +255,45 @@ function(input, output, session) {
       return()
     }
     
+    percentage = 10
+    if(is.null(dim(filteredData(input$task, input$task_id))) ||
+       NROW(filteredData(input$task, input$task_id)) == 0) {
+      return(discrepantie(
+        input$date,
+        input$testdate,
+        input$testdate_discrepantie,
+        input$meanprop,
+        input$meanprop_discrepantie,
+        input$gender,
+        percentage))
+    }
     
+    filteredDataLion <- filteredData(input$task, input$task_id)
+    averageDataLion <- getAverage(filteredDataLion)
+    testDateLion = min(filteredDataLion$created_at)
+    
+    filteredDataMonkey <- filteredData(input$task_discrepantie, input$task_id_discrepantie)
+    averageDataMonkey <- getAverage(filteredDataMonkey)
+    testDateMonkey = min(filteredDataMonkey$created_at)
+    
+    discrepantiecore = discrepantie(
+      input$date,
+      testDateLion, 
+      testdateMonkey, 
+      averageDataLion$meanprop, 
+      averageDataMonkey$meanprop, 
+      input$gender,
+      percentage)
+    print('discrepantiecore')
+    print(discrepantiecore)
+    return(data.frame(
+      'Discrepantie' = 
+        paste(
+          as.character(round(discrepantiecore[1], digits())), 
+          as.character(round(discrepantiecore[2], digits())), sep='-'),
+      'Nominale sign. niveau in %' = as.character(round(percentage, digits())),
+      check.names=FALSE
+    ))
   })
   
   output$subtitle <- renderText({

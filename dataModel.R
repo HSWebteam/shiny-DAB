@@ -87,12 +87,7 @@ getTaskStatus<-function(search){
   return(data)
 }
 
-percentielScoreAge<-function(birthDate, testDate, meanprop, task, gender){
-  if(is.null(meanprop)) {
-    return(FALSE)
-  }
-  ageDays = ageAtTestDay(birthDate, testDate)
-  
+jsuDistribution <- function(ageDays, meanprop, task, gender){
   # fetch saved model and data
   storedData = getStoredData(task, gender)
   storedModel = getStoredModel(task, gender)
@@ -102,7 +97,16 @@ percentielScoreAge<-function(birthDate, testDate, meanprop, task, gender){
   sigma <- predict(storedModel, what='sigma', newdata=newx, type='response', data=storedData)
   nu <- predict(storedModel, what='nu', newdata=newx, type='response', data=storedData)
   tau <- predict(storedModel, what='tau', newdata=newx, type='response', data=storedData)
-  return(pJSU(log(meanprop/(1-meanprop)), mu, sigma, nu, tau)*100)
+
+  return(pJSU(log(meanprop/(1-meanprop)), mu, sigma, nu, tau))
+}
+
+percentielScoreAge<-function(birthDate, testDate, meanprop, task, gender){
+  if(is.null(meanprop)) {
+    return(FALSE)
+  }
+  ageDays = ageAtTestDay(birthDate, testDate)
+  return(jsuDistribution(ageDays, meanprop, task, gender)*100)
 }
 
 confidenceInterval <- function(birthDate, testDate, meanprop, task, gender){
@@ -130,21 +134,13 @@ tScore <- function(birthDate, testDate, meanprop, task, gender){
   }
   ageDays = ageAtTestDay(birthDate, testDate)
   tscoresList = tscoresList()
-  # fetch saved model and data
-  storedData = getStoredData(task, gender)
-  storedModel = getStoredModel(task, gender)
+  
   column = getColumnName(task, gender)
   
   ts <- c(0, 0, 0)
-  newx <- data.frame(lftd = ageDays)
-  mu <- predict(storedModel, what = 'mu', newdata = newx, type = 'response', data = storedData)
-  sigma <- predict(storedModel, what = 'sigma', newdata = newx, type = 'response', data = storedData)
-  nu<-predict(storedModel, what='nu', newdata=newx, type = 'response',data = storedData)
-  tau<-predict(storedModel, what='tau', newdata=newx, type = 'response',data = storedData)
-  
   # from standard normal to T with mean 50 and sd 10     
-  tr <- qnorm(pJSU(log(meanprop/(1-meanprop)), mu, sigma, nu, tau))*10+50 
- 
+  tr <- qnorm(jsuDistribution(ageDays, meanprop, task, gender))*10+50 
+
   tscoreInterval = tscoresList[tscoresList$years == trunc(ageDays/365, 0), ]
   if(length(tscoreInterval[,column]) == 1){
     ts <- c(
@@ -155,54 +151,45 @@ tScore <- function(birthDate, testDate, meanprop, task, gender){
   return(ts)
 }
 
-getJSUDistribution()
-
-disc<-function(birthDate, testDate, meanLion, meanMonkey, percentage){
-  # 'percentage' is het nominale significantieniveau in procenten
-  ageDays = ageAtTestDay(birthDate, testDate)
-  
-  
-  
-  newx<-data.frame(lftd=x)
-  mu1<-predict(out1,what='mu',newdata=newx,type='response',data=D1)
-  sigma1<-predict(out1,what='sigma',newdata=newx,type='response',data=D1)
-  nu1<-predict(out1,what='nu',newdata=newx,type='response',data=D1)
-  tau1<-predict(out1,what='tau',newdata=newx,type='response',data=D1)
-  
-  tr1<-qnorm(pJSU(log(y1/(1-y1)),mu1,sigma1,nu1,tau1))*10+50 # from standard normal to T with mean 50 and sd 10 
-  
-  
-  mu2<-predict(out2,what='mu',newdata=newx,type='response',data=D2)
-  sigma2<-predict(out2,what='sigma',newdata=newx,type='response',data=D2)
-  nu2<-predict(out2,what='nu',newdata=newx,type='response',data=D2)
-  tau2<-predict(out2,what='tau',newdata=newx,type='response',data=D2)
-  
-  tr2<-qnorm(pJSU(log(y2/(1-y2)),mu2,sigma2,nu2,tau2))*10+50 # from standard normal to T with mean 50 and sd 10 
-  if (trunc(x/365,0)==6){
+discrepantie <- function(birthDate, testDateLion, testdateMonkey, meanPropLion, meanPropMonkey, gender, percentage){
+  if(is.null(meanPropLion)) {
+    return(FALSE)
+  }
+  if(is.null(meanPropMonkey)) {
+    return(FALSE)
+  }
+  ageDays = ageAtTestDay(birthDate, testDateLion)
+  newx<-data.frame(lftd=ageDays)
+  tr1 <- qnorm(jsuDistribution(ageDays, meanPropLion, 1, gender))*10+50 # from standard normal to T with mean 50 and sd 10          
+  tr2 <- qnorm(jsuDistribution(ageDays, meanPropMonkey, 2, gender))*10+50 # from standard normal to T with mean 50 and sd 10          
+  se1 <- c(0, 0)
+  se2 <- c(0, 0)
+  if (trunc(ageDays/365,0)==6){
     se1<-10*sqrt(1-.86)
     se2<-10*sqrt(1-.87)}
-  if (trunc(x/365,0)==7){
+  if (trunc(ageDays/365,0)==7){
     se1<-10*sqrt(1-.88)
     se2<-10*sqrt(1-.86)}
-  if (trunc(x/365,0)==8){
+  if (trunc(ageDays/365,0)==8){
     se1<-10*sqrt(1-.87)
     se2<-10*sqrt(1-.82)}
-  if (trunc(x/365,0)==9){
+  if (trunc(ageDays/365,0)==9){
     se1<-10*sqrt(1-.85)
     se2<-10*sqrt(1-.82)}
-  if (trunc(x/365,0)==10){
+  if (trunc(ageDays/365,0)==10){
     se1<-10*sqrt(1-.84)
     se2<-10*sqrt(1-.80)}
-  if (trunc(x/365,0)==11){
+  if (trunc(ageDays/365,0)==11){
     se1<-10*sqrt(1-.85)
     se2<-10*sqrt(1-.81)}
-  if (trunc(x/365,0)==12){
+  if (trunc(ageDays/365,0)==12){
     se1<-10*sqrt(1-.86)
     se2<-10*sqrt(1-.84)}
-  if (tr1-tr2>=0){z<-qnorm(1-a/200)}
-  if (tr1-tr2<0){z<-qnorm(a/200)}
+  if (tr1-tr2>=0){z<-qnorm(1-percentage/200)}
+  if (tr1-tr2<0){z<-qnorm(percentage/200)}
   cr<-z*sqrt(se1^2+se2^2)
-  return(c(round(tr1-tr2,1),round(cr,1)))}
+  return(c(round(tr1-tr2,1),round(cr,1)))
+}
 
 
 density <- function(ageDays, score, task, gender){
