@@ -76,4 +76,5 @@ if (tr1-tr2<0){z<-qnorm(a/200)}
 cr<-z*sqrt(se1^2+se2^2)
 return(c(tr1-tr2, cr))}
 
+disc(ld,.3,.35,5)
 disc(ld,.3,.35,10)

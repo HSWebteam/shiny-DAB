@@ -44,14 +44,14 @@ mu<-predict(ODTm,what='mu',newdata=newx,type='response',data=Am)
 sigma<-predict(ODTm,what='sigma',newdata=newx,type='response',data=Am)
 nu<-predict(ODTm,what='nu',newdata=newx,type='response',data=Am)
 tau<-predict(ODTm,what='tau',newdata=newx,type='response',data=Am)
-pcy<-round(pJSU(y,mu,sigma,nu,tau)*100,1)
+pcy<-pJSU(y,mu,sigma,nu,tau)*100
 cat(pcy)}
 if (z==2){
 mu<-predict(ODTj,what='mu',newdata=newx,type='response',data=Aj)
 sigma<-predict(ODTj,what='sigma',newdata=newx,type='response',data=Aj)
 nu<-predict(ODTj,what='nu',newdata=newx,type='response',data=Aj)
 tau<-predict(ODTj,what='tau',newdata=newx,type='response',data=Aj)
-pcy<-round(pJSU(y,mu,sigma,nu,tau)*100,1)
+pcy<-pJSU(y,mu,sigma,nu,tau)*100
 cat(pcy)}
 }
 
