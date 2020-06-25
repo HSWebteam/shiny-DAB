@@ -42,6 +42,7 @@ fluidPage(
             htmlOutput("warning"),
             tableOutput("tableGeneral"),
             
+            htmlOutput("subtitleDiscrepantieAnalyse"),
             tableOutput("tableDiscrepantieAnalyse"),
             
             htmlOutput("subtitle"),
@@ -49,11 +50,11 @@ fluidPage(
             tableOutput("tableScore"),
             plotOutput("plotGrowth", width = 500, height = 400),
             
+            ## these items are displayed when the discrepantie analysis is checked.
             htmlOutput("subtitleDiscrepantie"),
             tableOutput("tableTestInfoDiscrepantie"),
             tableOutput("tableScoreDiscrepantie"),
             plotOutput("plotGrowthDiscrepantie", width = 500, height = 400)
         )
     )
-    # DT::dataTableOutput("table")
 )

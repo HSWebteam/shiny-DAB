@@ -8,11 +8,9 @@ params:
   storedData: NA
   ageDays: NA
   meanproportion: NA
-  percentielScore: NA
   participantData: NA
   taskData: NA
   analizeData: NA
-  densityData: NA
 ---
 
 ```{r echo  = FALSE}
@@ -31,13 +29,8 @@ kable(params$analizeData)
 
 ```{r echo  = FALSE}
 source(paste(params$path, "plots.R", sep = '/'))
-# percetielPlot(params$storedData, params$percentielScore)
 ```
 
 ```{r echo  = FALSE}
 growthPlot(params$storedModel, params$storedData, params$ageDays, params$meanproportion)
-```
-
-```{r echo  = FALSE}
-# densityScoreAgePlot(params$densityData)
 ```

@@ -6,10 +6,11 @@
 #
 #    http://shiny.rstudio.com/
 #
+# options(shiny.port = 5732)
 
 library("bitops")
 library("devtools")
-install_github("HSWebteam/rDAB")
+# install_github("HSWebteam/rDAB")
 # library(rDAB, lib.loc = "/home/dasscheman/Surfdrive/Development/rdab")
 library("rDAB")
 
@@ -45,7 +46,7 @@ function(input, output, session) {
     # This function is used to detemine de number of digets 
     # the anaylises should have. On production it should be 0.
     query <- parseQueryString(session$clientData$url_search)
-    if(query$returnurl != 'https://dab.app.uu.nl') {
+    if (query$returnurl != 'https://dab.app.uu.nl') {
       return(5)
     }
     return(0)
@@ -54,35 +55,35 @@ function(input, output, session) {
   filteredData <- function(task, taskId) {
     # variable task id is only used when for a task multiple resutls exists.
     data = fetchedData()
-    if(is.null(dim(data)) ||
+    if (is.null(dim(data)) ||
        NROW(data) == 0) {
         return(FALSE)
     }
-    if(length(task) == 0) {
+    if (length(task) == 0) {
       return(FALSE)
     }
     
-    if(task == '1') {
+    if (task == '1') {
       #Lion game
       data = data[data$taak == '1', ]
     }
 
-    if(task == '2') {
+    if (task == '2') {
       # Monkey game
       data = data[data$taak == '2', ]
       data = data[data$theme == 'text_theme', ]
     }
 
-    if(task == '3') {
+    if (task == '3') {
       # monkey game
       data = data[data$taak == '2', ]
       data = data[data$theme == 'picture_theme', ]
     }
 
-    if(length(unique(data$task_id)) > 1 ) {
+    if (length(unique(data$task_id)) > 1 ) {
       # for the taak/theme combination multiple task_id's exists.
       # therefore use the task_id selector.
-      if(length(taskId) == 0) {
+      if (length(taskId) == 0) {
         return(FALSE)
       }
       data = data[data$task_id == taskId, ]
@@ -95,11 +96,11 @@ function(input, output, session) {
 
   filterTaskStatus <- function(){
     data = fetchedTaskStatus()
-    if(is.null(dim(data)) ||
+    if (is.null(dim(data)) ||
        NROW(data) == 0) {
       return(FALSE)
     }
-    if(length(input$task) == 0) {
+    if (length(input$task) == 0) {
       return(FALSE)
     }
 
@@ -109,15 +110,15 @@ function(input, output, session) {
   output$analyzeSelector <- renderUI({
     radioButtons(
       "analyze_type", 
-      "selecteer Analyze:", 
-      list("Norm analyze" = "norm", "Discrepantie analyze" = "discrepantie"),
+      "selecteer Analyse:", 
+      list("Norm analyse" = "norm", "Discrepantie analyse" = "discrepantie"),
       "norm"
     )
   })
   
   output$taskSelector <- renderUI({
     tasks <- tasksArray()
-    if(length(input$analyze_type) != 0 &&
+    if (length(input$analyze_type) != 0 &&
        input$analyze_type == 'discrepantie') {
       tasks = tasks[1]
     }
@@ -128,7 +129,7 @@ function(input, output, session) {
   })
   
   output$taskSelectorDiscrepantie <- renderUI({
-    if(length(input$analyze_type) != 0 &&
+    if (length(input$analyze_type) != 0 &&
        input$analyze_type == 'discrepantie') {
       tasks <- tasksArray()
       radioButtons(
@@ -139,12 +140,12 @@ function(input, output, session) {
   })
   
   output$taskIdSelector <- renderUI({
-    if(is.recursive(fetchedData())) {
+    if (is.recursive(fetchedData())) {
       data = fetchedData()
       data = data[data$taak == input$task, ]
       # when for given task multiple id's exist, display id selector.
-      if(NROW(data) > 0 ) {
-        if(length(unique(data$task_id)) > 1 ) {
+      if (NROW(data) > 0 ) {
+        if (length(unique(data$task_id)) > 1 ) {
           radioButtons("task_id", "selecteer taak id:", unique(data$task_id))
         }
       }
@@ -152,14 +153,14 @@ function(input, output, session) {
   })
   
   output$taskIdSelectorDiscrepantie <- renderUI({
-    if(length(input$analyze_type) != 0 &&
+    if (length(input$analyze_type) != 0 &&
        input$analyze_type == 'discrepantie') {
-      if(is.recursive(fetchedData())) {
+      if (is.recursive(fetchedData())) {
         data = fetchedData()
         data = data[data$taak == input$task_discrepantie, ]
         # when for given task_discrepantie multiple id's exist, display id selector.
-        if(NROW(data) > 0 ) {
-          if(length(unique(data$task_id)) > 1 ) {
+        if (NROW(data) > 0 ) {
+          if (length(unique(data$task_id)) > 1 ) {
             radioButtons("task_id_discrepantie", "selecteer taak id:", unique(data$task_id))
           }
         }
@@ -170,7 +171,7 @@ function(input, output, session) {
   output$average <- renderUI({
     # This is only used when no data is fetched from the dap.app.
     # Mostly when this shiny app is used as standalone.
-    if(!is.recursive(fetchedData())) {
+    if (!is.recursive(fetchedData())) {
       sliderInput("meanprop", "proportie correct", .01, 1, .5, step = .005)
     }
   })
@@ -178,9 +179,9 @@ function(input, output, session) {
   output$averageDiscrepantie <- renderUI({
     # This is only used when no data is fetched from the dap.app.
     # Mostly when this shiny app is used as standalone.
-    if(length(input$analyze_type) != 0 &&
+    if (length(input$analyze_type) != 0 &&
        input$analyze_type == 'discrepantie') {
-      if(!is.recursive(fetchedData())) {
+      if (!is.recursive(fetchedData())) {
         sliderInput("meanprop_discrepantie", "proportie correct", .01, 1, .5, step = .005)
       }
     }
@@ -189,7 +190,7 @@ function(input, output, session) {
   output$testdate <- renderUI({
     # This is only used when no data is fetched from the dap.app.
     # Mostly when this shiny app is used as standalone.
-    if(!is.recursive(fetchedData())) {
+    if (!is.recursive(fetchedData())) {
       dateInput('testdate',
                 label = 'TestDate: jjjj-mm-dd',
                 value = Sys.Date() - years(6)
@@ -200,9 +201,9 @@ function(input, output, session) {
   output$testdateDiscrepantie <- renderUI({
     # This is only used when no data is fetched from the dap.app.
     # Mostly when this shiny app is used as standalone.
-    if(length(input$analyze_type) != 0 &&
+    if (length(input$analyze_type) != 0 &&
        input$analyze_type == 'discrepantie') {
-      if(!is.recursive(fetchedData())) {
+      if (!is.recursive(fetchedData())) {
         dateInput(
           'testdate_discrepantie',
           label = 'TestDate: jjjj-mm-dd',
@@ -211,18 +212,18 @@ function(input, output, session) {
       }
     }
   })
-  
+
   output$warning <- renderText({
-    if(is.null(dim(filteredData(input$task, input$task_id))) ||
+    if (is.null(dim(filteredData(input$task, input$task_id))) ||
        NROW(filteredData(input$task, input$task_id)) == 0) {
       return()
     }
     status <- subset(filterTaskStatus(), task_id == unique(filteredData(input$task, input$task_id)$task_id))
-    if(status$finished != 1) {
+    if (status$finished != 1) {
       "<font color=\"#FF0000\"><b>Let op! participant heeft deze taak nog niet afgerond</b></font>"
     }
     
-    if(is.null(dim(filteredData(input$task_discrepantie, input$task_id_discrepantie))) ||
+    if (is.null(dim(filteredData(input$task_discrepantie, input$task_id_discrepantie))) ||
        NROW(filteredData(input$task_discrepantie, input$task_id_discrepantie)) == 0) {
       return()
     }
@@ -230,13 +231,13 @@ function(input, output, session) {
     statusDiscrepantie <- subset(
         filterTaskStatus(), 
         task_id == unique(filteredData(input$task_discrepantie, input$task_id_discrepantie)$task_id))
-    if(statusDiscrepantie$finished != 1) {
+    if (statusDiscrepantie$finished != 1) {
       "<font color=\"#FF0000\"><b>Let op! participant heeft deze taak nog niet afgerond</b></font>"
     }
   })
   
   output$tableGeneral <- renderTable({
-    if(is.null(dim(filteredData(input$task, input$task_id))) ||
+    if (is.null(dim(filteredData(input$task, input$task_id))) ||
        NROW(filteredData(input$task, input$task_id)) == 0) {
       return('Geen data gevonden.')
     }
@@ -249,23 +250,47 @@ function(input, output, session) {
     )
   })
   
+  output$subtitleDiscrepantieAnalyse <- renderText({
+    if (length(input$analyze_type) == 0 ||
+       input$analyze_type == 'norm') {
+      return()
+    }
+    paste("<font color=\"#000000\"><h3>Discrepantie analyse</h3></font>", sep = '')
+  })
+  
   output$tableDiscrepantieAnalyse <- renderTable({
-    if(length(input$analyze_type) == 0 ||
+    if (length(input$analyze_type) == 0 ||
        input$analyze_type == 'norm') {
       return()
     }
     
     percentage = 10
-    if(is.null(dim(filteredData(input$task, input$task_id))) ||
-       NROW(filteredData(input$task, input$task_id)) == 0) {
-      return(discrepantie(
+    if (is.null(dim(filteredData(input$task_discrepantie, input$task_id_discrepantie))) ||
+       NROW(filteredData(input$task_discrepantie, input$task_id_discrepantie)) == 0) {
+      # When no data is found, the manual input is anabled.
+      # This is only used when this shiny app is used as a standalone.
+      discrepantiecore = discrepantie(
         input$date,
         input$testdate,
         input$testdate_discrepantie,
         input$meanprop,
         input$meanprop_discrepantie,
         input$gender,
-        percentage))
+        percentage)
+
+      if (discrepantiecore > 0 ||
+         discrepantiecore == FALSE) {
+        return(data.frame(
+          'Discrepantie' = 'Geen data gevonden'
+        ))
+      }
+      
+      return(data.frame(
+        'Discrepantie' = as.character(round(discrepantiecore[1], 5)),
+        'Kritieke waarde' = as.character(round(discrepantiecore[2], 5)),
+        'Nominale sign. niveau in %' = as.character(round(percentage, 5)),
+        check.names = FALSE
+      ))
     }
     
     filteredDataLion <- filteredData(input$task, input$task_id)
@@ -275,29 +300,19 @@ function(input, output, session) {
     filteredDataMonkey <- filteredData(input$task_discrepantie, input$task_id_discrepantie)
     averageDataMonkey <- getAverage(filteredDataMonkey)
     testDateMonkey = min(filteredDataMonkey$created_at)
-    
-    discrepantiecore = discrepantie(
-      input$date,
-      testDateLion, 
-      testdateMonkey, 
-      averageDataLion$meanprop, 
-      averageDataMonkey$meanprop, 
-      input$gender,
-      percentage)
-    print('discrepantiecore')
-    print(discrepantiecore)
-    return(data.frame(
-      'Discrepantie' = 
-        paste(
-          as.character(round(discrepantiecore[1], digits())), 
-          as.character(round(discrepantiecore[2], digits())), sep='-'),
-      'Nominale sign. niveau in %' = as.character(round(percentage, digits())),
-      check.names=FALSE
-    ))
-  })
+
+    discrepantieAnalyze(input$date,
+                        testDateLion, 
+                        testDateMonkey, 
+                        averageDataLion$meanprop, 
+                        averageDataMonkey$meanprop, 
+                        input$gender,
+                        digits())
+
+  }, width = "75%", bordered = FALSE, align = 'c', digits = 4)
   
   output$subtitle <- renderText({
-    if(is.null(dim(filteredData(input$task, input$task_id))) ||
+    if (is.null(dim(filteredData(input$task, input$task_id))) ||
        NROW(filteredData(input$task, input$task_id)) == 0) {
       return()
     }
@@ -309,7 +324,7 @@ function(input, output, session) {
 
  
   output$tableTestInfo <- renderTable({
-    if(is.null(dim(filteredData(input$task, input$task_id))) ||
+    if (is.null(dim(filteredData(input$task, input$task_id))) ||
        NROW(filteredData(input$task, input$task_id)) == 0) {
       return('Geen data gevonden.')
     }
@@ -317,7 +332,7 @@ function(input, output, session) {
   })
   
   output$tableScore <- renderTable({
-    if(is.null(dim(filteredData(input$task, input$task_id))) ||
+    if (is.null(dim(filteredData(input$task, input$task_id))) ||
        NROW(filteredData(input$task, input$task_id)) == 0) {
       return(analizeDataManual(
         input$meanprop,
@@ -332,7 +347,7 @@ function(input, output, session) {
   }, width = "100%", bordered = FALSE, align = 'c', digits = 4)
   
   output$plotGrowth <- renderPlot({
-    if(is.null(dim(filteredData(input$task, input$task_id))) ||
+    if (is.null(dim(filteredData(input$task, input$task_id))) ||
        NROW(filteredData(input$task, input$task_id)) == 0) {
       return('Geen data gevonden.')
     }
@@ -347,11 +362,11 @@ function(input, output, session) {
   })
   
   output$subtitleDiscrepantie <- renderText({
-    if(length(input$analyze_type) == 0 ||
+    if (length(input$analyze_type) == 0 ||
        input$analyze_type == 'norm') {
       return()
     }
-    if(is.null(dim(filteredData(input$task_discrepantie, input$task_id_discrepantie))) ||
+    if (is.null(dim(filteredData(input$task_discrepantie, input$task_id_discrepantie))) ||
        NROW(filteredData(input$task_discrepantie, input$task_id_discrepantie)) == 0) {
       return()
     }
@@ -362,11 +377,11 @@ function(input, output, session) {
   })
   
   output$tableTestInfoDiscrepantie <- renderTable({
-    if(length(input$analyze_type) == 0 ||
+    if (length(input$analyze_type) == 0 ||
        input$analyze_type == 'norm') {
       return()
     }
-    if(is.null(dim(filteredData(input$task_discrepantie, input$task_id_discrepantie))) ||
+    if (is.null(dim(filteredData(input$task_discrepantie, input$task_id_discrepantie))) ||
        NROW(filteredData(input$task_discrepantie, input$task_id_discrepantie)) == 0) {
       return('Geen data gevonden.')
     }
@@ -374,30 +389,35 @@ function(input, output, session) {
   })
   
   output$tableScoreDiscrepantie <- renderTable({
-    if(length(input$analyze_type) == 0 ||
+    if (length(input$analyze_type) == 0 ||
        input$analyze_type == 'norm') {
       return()
     }
-    if(is.null(dim(filteredData(input$task_discrepantie, input$task_id_discrepantie))) ||
+
+    if (is.null(dim(filteredData(input$task_discrepantie, input$task_id_discrepantie))) ||
        NROW(filteredData(input$task_discrepantie, input$task_id_discrepantie)) == 0) {
-      return(analizeDataManual(
-        input$meanprop_discrepantie,
-        input$testdate_discrepantie,
-        input$date,
-        input$task_discprepantie,
-        input$gender,
-        4))
+      
+      return(analizeDataManual(input$meanprop_discrepantie,
+                               input$testdate_discrepantie,
+                               input$date,
+                               input$task_discrepantie,
+                               input$gender,
+                               4))
     }
     
-    analizeData(filteredData(input$task_discrepantie, input$task_id_discrepantie), input$date, input$task, input$gender, digits())
+    analizeData(filteredData(input$task_discrepantie, input$task_id_discrepantie), 
+                input$date, 
+                input$task_discrepantie,
+                input$gender, 
+                digits())
   }, width = "100%", bordered = FALSE, align = 'c', digits = 4)
   
   output$plotGrowthDiscrepantie <- renderPlot({
-    if(length(input$analyze_type) == 0 ||
+    if (length(input$analyze_type) == 0 ||
        input$analyze_type == 'norm') {
       return()
     }
-    if(is.null(dim(filteredData(input$task_discrepantie, input$task_id_discrepantie))) ||
+    if (is.null(dim(filteredData(input$task_discrepantie, input$task_id_discrepantie))) ||
        NROW(filteredData(input$task_discrepantie, input$task_id_discrepantie)) == 0) {
       return('Geen data gevonden.')
     }
@@ -412,59 +432,7 @@ function(input, output, session) {
   })
   
   
-  # output$plotPercentiel <- renderPlot({
-  #   if(is.null(dim(filteredData(input$task, input$task_id))) ||
-  #     NROW(filteredData(input$task, input$task_id)) == 0) {
-  #       return('Geen data gevonden.')
-  #   }
-  #   storedData = getStoredData(input$task, input$gender)
-  # 
-  #   averageData <- getAverage(filteredData(input$task, input$task_id))
-  #   testDate = min(filteredData(input$task, input$task_id)$created_at)
-  #   percetielPlot(storedData, percentielScoreAge(input$date, testDate, averageData$meanprop))
-  # })
-  # 
-  # 
-  # output$plotDensity <- renderPlot({
-  #   if(is.null(dim(filteredData(input$task, input$task_id))) ||
-  #      NROW(filteredData(input$task, input$task_id)) == 0 ) {
-  #       return('Geen data gevonden.')
-  #   }
-  # 
-  #   averageData <- getAverage(filteredData(input$task, input$task_id))
-  #   testDate = min(filteredData(input$task, input$task_id)$created_at)
-  # 
-  #   ageDays = ageAtTestDay(input$date, testDate)
-  #   data = density(ageDays, averageData$meanprop, input$task, input$gender)
-  #   densityScoreAgePlot(data)
-  # })
-
-
-  # Filter data based on selections
-  # output$table <- DT::renderDataTable(DT::datatable({
-  #   if(is.null(dim(filteredData(input$task, input$task_id))) ||
-  #      NROW(filteredData(input$task, input$task_id)) == 0) {
-  #     return(data.frame(c('error'), c('Geen data gevonden.')))
-  #   }
-  #   filteredData(input$task, input$task_id)
-  # }))
-
-  # output$urlText <- renderText({
-  #   if(is.null(dim(filteredData(input$task, input$task_id))) ||
-  #      NROW(filteredData(input$task, input$task_id)) == 0) {
-  #     return('Geen data gevonden.')
-  #   }
-  #   averageData <- getAverage(filteredData(input$task, input$task_id))
-  #   paste(sep = "",
-  #     "protocol: ", session$clientData$url_protocol, "\n",
-  #     "hostname: ", session$clientData$url_hostname, "\n",
-  #     "pathname: ", session$clientData$url_pathname, "\n",
-  #     "port: ",     session$clientData$url_port,     "\n",
-  #     "search: ",   session$clientData$url_search,   "\n",
-  #     "test: ", averageData$meanprop
-  #   )
-  # })
-
+  
   output$report <- downloadHandler(
     filename = function() {
       groupname <- unique(filteredData(input$task, input$task_id)$group_name)
@@ -485,48 +453,31 @@ function(input, output, session) {
       taskname <- names(tasksArray()[as.numeric(input$task)])
       caseNumber <- unique(filteredData(input$task, input$task_id)$participant_case_number)
 
-      tempReport <- file.path(tempdir(), "report.Rmd")
-      file.copy("report.Rmd", tempReport, overwrite = TRUE)
+      if (input$analyze_type == 'norm') {
+        tempReport <- file.path(tempdir(), "report.Rmd")
+        file.copy("report.Rmd", tempReport, overwrite = TRUE)
+        params <- listNormData(
+            filteredData(input$task, input$task_id), 
+            input$task, 
+            input$task_id, 
+            input$gender, 
+            input$date)
+      }
+      
+      if (input$analyze_type == 'discrepantie') {
+        tempReport <- file.path(tempdir(), "reportDiscrepantie.Rmd")
+        file.copy("reportDiscrepantie.Rmd", tempReport, overwrite = TRUE)
+        params <- listDiscrepantieData(
+          filteredData(input$task, input$task_id), 
+          filteredData(input$task_discrepantie, input$task_id_discrepantie), 
+          input$task, 
+          input$task_discrepantie, 
+          input$task_id, 
+          input$task_id_discrepantie,
+          input$gender, 
+          input$date)
+      }
 
-      storedModel = getStoredModel(input$task, input$gender)
-      storedData = getStoredData(input$task, input$gender)
-
-      averageData <- getAverage(filteredData(input$task, input$task_id))
-      testDate = min(filteredData(input$task, input$task_id)$created_at)
-
-      ageDays = ageAtTestDay(input$date, testDate)
-      # Set up parameters to pass to Rmd document
-      params <- list(
-        groupname = groupname,
-        taskname = taskname,
-        path = getwd(),
-        storedModel = storedModel,
-        storedData = storedData,
-        ageDays = ageDays,
-        meanproportion = averageData$meanprop,
-        percentielScore = percentielScoreAge(
-          input$date,
-          testDate,
-          averageData$meanprop,
-          input$task,
-          input$gender),
-        participantData = participantData(
-          caseNumber,
-          input$gender,
-          input$date,
-          unique(filteredData(input$task, input$task_id)$participant_name)),
-        taskData = taskData(filteredData(input$task, input$task_id), input$date),
-        analizeData = analizeData(
-          filteredData(input$task, input$task_id),
-          input$date,
-          input$task,
-          input$gender),
-        densityData = density(
-          ageDays,
-          averageData$meanprop,
-          input$task,
-          input$gender)
-      )
       # Knit the document, passing in the `params` list, and eval it in a
       # child of the global environment (this isolates the code in the document
       # from the code in this app).

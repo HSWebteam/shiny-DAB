@@ -2,15 +2,15 @@ source("helperMethods.R")
 library("eeptools")
 library("gamlss")
 
-getData<-function(search){
+getData <- function(search){
   query <- parseQueryString(search)
-  if(length(query) == 0) {
+  if (length(query) == 0) {
     return(NA)
   }
-  if(query$returnurl == 'https://taken.vagrant') {
+  if (query$returnurl == 'https://taken.vagrant') {
     httr::set_config(config(ssl_verifypeer = 0L))
   }
-  resp<-GET(query$returnurl, path = 'api/results', query = list(token = query$token))
+  resp <- GET(query$returnurl, path = 'api/results', query = list(token = query$token))
   # TODO check status: data$status_code
   if (resp$status_code != "200") {
     stop("API did not returned error", call. = FALSE)
@@ -29,11 +29,11 @@ getData<-function(search){
                     "response", "response_matrix_number", "response_time",
                     "score", "created_at", "updated_at", "deleted_at")
 
-  if(!is.atomic(list(responseData['results']))) {
+  if (!is.atomic(list(responseData['results']))) {
     return  
   } 
   
-  data<-data.frame(
+  data <- data.frame(
     matrix(
       unlist(
         responseData['results'], 
@@ -47,15 +47,15 @@ getData<-function(search){
 }
 
 
-getTaskStatus<-function(search){
+getTaskStatus <- function(search){
   query <- parseQueryString(search)
-  if(length(query) == 0) {
+  if (length(query) == 0) {
     return(NA)
   }
-  if(query$returnurl == 'https://taken.vagrant') {
+  if (query$returnurl == 'https://taken.vagrant') {
     httr::set_config(config(ssl_verifypeer = 0L))
   }
-  resp<-GET(query$returnurl, path = 'api/task', query = list(token = query$token))
+  resp <- GET(query$returnurl, path = 'api/task', query = list(token = query$token))
 
   if (resp$status_code != "200") {
     stop("API did not returned error", call. = FALSE)
@@ -70,10 +70,10 @@ getTaskStatus<-function(search){
   )
   
   col_headings <- c("task_id", "finished")
-  if(!is.atomic(list(responseData['finised']))) {
+  if (!is.atomic(list(responseData['finised']))) {
     return  
   } 
-  data<-data.frame(
+  data <- data.frame(
     matrix(
       unlist(
         responseData['finised'], 
@@ -92,17 +92,17 @@ jsuDistribution <- function(ageDays, meanprop, task, gender){
   storedData = getStoredData(task, gender)
   storedModel = getStoredModel(task, gender)
   
-  newx <- data.frame(lftd=ageDays)
-  mu <- predict(storedModel, what='mu', newdata=newx, type='response', data=storedData)
-  sigma <- predict(storedModel, what='sigma', newdata=newx, type='response', data=storedData)
-  nu <- predict(storedModel, what='nu', newdata=newx, type='response', data=storedData)
-  tau <- predict(storedModel, what='tau', newdata=newx, type='response', data=storedData)
+  newx <- data.frame(lftd = ageDays)
+  mu <- predict(storedModel, what = 'mu', newdata = newx, type = 'response', data = storedData)
+  sigma <- predict(storedModel, what = 'sigma', newdata = newx, type = 'response', data = storedData)
+  nu <- predict(storedModel, what = 'nu', newdata = newx, type = 'response', data = storedData)
+  tau <- predict(storedModel, what = 'tau', newdata = newx, type = 'response', data = storedData)
 
-  return(pJSU(log(meanprop/(1-meanprop)), mu, sigma, nu, tau))
+  return(pJSU(log(meanprop/(1 - meanprop)), mu, sigma, nu, tau))
 }
 
-percentielScoreAge<-function(birthDate, testDate, meanprop, task, gender){
-  if(is.null(meanprop)) {
+percentielScoreAge <- function(birthDate, testDate, meanprop, task, gender){
+  if (is.null(meanprop)) {
     return(FALSE)
   }
   ageDays = ageAtTestDay(birthDate, testDate)
@@ -110,7 +110,7 @@ percentielScoreAge<-function(birthDate, testDate, meanprop, task, gender){
 }
 
 confidenceInterval <- function(birthDate, testDate, meanprop, task, gender){
-  if(is.null(meanprop)) {
+  if (is.null(meanprop)) {
     return(FALSE)
   }
   ageDays = ageAtTestDay(birthDate, testDate)
@@ -119,95 +119,95 @@ confidenceInterval <- function(birthDate, testDate, meanprop, task, gender){
   z <- c(0, 1)
   
   betrouwInterval = biList[biList$years == trunc(ageDays/365, 0), ]
-  if(length(betrouwInterval[,column]) == 1){
-    z <- c(meanprop-1.96*betrouwInterval[,column], 
-           meanprop+1.96*betrouwInterval[,column])
+  if (length(betrouwInterval[,column]) == 1) {
+    z <- c(meanprop - 1.96*betrouwInterval[,column], 
+           meanprop + 1.96*betrouwInterval[,column])
   }
-  if (z[1]<0){z[1]<-0}
-  if (z[2]>1){z[2]<-1}
+  if (z[1] < 0) {z[1] <- 0}
+  if (z[2] > 1) {z[2] <- 1}
   return(z*100)
 }
 
 tScore <- function(birthDate, testDate, meanprop, task, gender){
-  if(is.null(meanprop)) {
+  if (is.null(meanprop)) {
     return(FALSE)
   }
   ageDays = ageAtTestDay(birthDate, testDate)
   tscoresList = tscoresList()
-  
   column = getColumnName(task, gender)
-  
   ts <- c(0, 0, 0)
   # from standard normal to T with mean 50 and sd 10     
-  tr <- qnorm(jsuDistribution(ageDays, meanprop, task, gender))*10+50 
+  tr <- qnorm(jsuDistribution(ageDays, meanprop, task, gender))*10 + 50 
 
   tscoreInterval = tscoresList[tscoresList$years == trunc(ageDays/365, 0), ]
-  if(length(tscoreInterval[,column]) == 1){
+  if (length(tscoreInterval[,column]) == 1) {
     ts <- c(
       tr, 
-      tr-1.96*10*sqrt(1-tscoreInterval[,column]), 
-      tr+1.96*10*sqrt(1-tscoreInterval[,column]))
+      tr - 1.96*10*sqrt(1 - tscoreInterval[,column]), 
+      tr + 1.96*10*sqrt(1 - tscoreInterval[,column]))
   }
   return(ts)
 }
 
 discrepantie <- function(birthDate, testDateLion, testdateMonkey, meanPropLion, meanPropMonkey, gender, percentage){
-  if(is.null(meanPropLion)) {
+  if (is.null(meanPropLion)) {
     return(FALSE)
   }
-  if(is.null(meanPropMonkey)) {
+  if (is.null(meanPropMonkey)) {
     return(FALSE)
   }
   ageDays = ageAtTestDay(birthDate, testDateLion)
-  newx<-data.frame(lftd=ageDays)
-  tr1 <- qnorm(jsuDistribution(ageDays, meanPropLion, 1, gender))*10+50 # from standard normal to T with mean 50 and sd 10          
-  tr2 <- qnorm(jsuDistribution(ageDays, meanPropMonkey, 2, gender))*10+50 # from standard normal to T with mean 50 and sd 10          
+  tr1 <- qnorm(jsuDistribution(ageDays, meanPropLion, 1, gender))*10 + 50 # from standard normal to T with mean 50 and sd 10          
+  tr2 <- qnorm(jsuDistribution(ageDays, meanPropMonkey, 2, gender))*10 + 50 # from standard normal to T with mean 50 and sd 10          
   se1 <- c(0, 0)
   se2 <- c(0, 0)
-  if (trunc(ageDays/365,0)==6){
-    se1<-10*sqrt(1-.86)
-    se2<-10*sqrt(1-.87)}
-  if (trunc(ageDays/365,0)==7){
-    se1<-10*sqrt(1-.88)
-    se2<-10*sqrt(1-.86)}
-  if (trunc(ageDays/365,0)==8){
-    se1<-10*sqrt(1-.87)
-    se2<-10*sqrt(1-.82)}
-  if (trunc(ageDays/365,0)==9){
-    se1<-10*sqrt(1-.85)
-    se2<-10*sqrt(1-.82)}
-  if (trunc(ageDays/365,0)==10){
-    se1<-10*sqrt(1-.84)
-    se2<-10*sqrt(1-.80)}
-  if (trunc(ageDays/365,0)==11){
-    se1<-10*sqrt(1-.85)
-    se2<-10*sqrt(1-.81)}
-  if (trunc(ageDays/365,0)==12){
-    se1<-10*sqrt(1-.86)
-    se2<-10*sqrt(1-.84)}
-  if (tr1-tr2>=0){z<-qnorm(1-percentage/200)}
-  if (tr1-tr2<0){z<-qnorm(percentage/200)}
-  cr<-z*sqrt(se1^2+se2^2)
-  return(c(round(tr1-tr2,1),round(cr,1)))
+  if (trunc(ageDays/365,0) == 6) {
+    se1 <- 10*sqrt(1 - .86)
+    se2 <- 10*sqrt(1 - .87)}
+  if (trunc(ageDays/365,0) == 7) {
+    se1 <- 10*sqrt(1 - .88)
+    se2 <- 10*sqrt(1 - .86)}
+  if (trunc(ageDays/365,0) == 8) {
+    se1 <- 10*sqrt(1 - .87)
+    se2 <- 10*sqrt(1 - .82)}
+  if (trunc(ageDays/365,0) == 9) {
+    se1 <- 10*sqrt(1 - .85)
+    se2 <- 10*sqrt(1 - .82)}
+  if (trunc(ageDays/365,0) == 10) {
+    se1 <- 10*sqrt(1 - .84)
+    se2 <- 10*sqrt(1 - .80)}
+  if (trunc(ageDays/365,0) == 11) {
+    se1 <- 10*sqrt(1 - .85)
+    se2 <- 10*sqrt(1 - .81)}
+  if (trunc(ageDays/365,0) == 12) {
+    se1 <- 10*sqrt(1 - .86)
+    se2 <- 10*sqrt(1 - .84)}
+  if (tr1 - tr2 >= 0) {z <- qnorm(1 - percentage/200)}
+  if (tr1 - tr2 < 0) {z <- qnorm(percentage/200)}
+  cr <- z*sqrt(se1^2 + se2^2)
+  
+  discrepatieScore = meanPropLion - meanPropMonkey
+  ## task 4 is for the discrepantie analysis.
+  discrepantiePercentage = percentielScoreAge(birthDate, testDateLion, discrepatieScore, 4, gender)
+  return(c(tr1 - tr2, cr, discrepantiePercentage))
 }
-
 
 density <- function(ageDays, score, task, gender){
   # fetch saved model and data
   storedData = getStoredData(task, gender)
   storedModel = getStoredModel(task, gender)
   
-  LOscore<-log(storedData$score/(1-storedData$score))
+  LOscore <- log(storedData$score/(1 - storedData$score))
   
-  newx <- data.frame(lftd=ageDays)
-  mu <- predict(storedModel, what='mu', newdata=newx, type='response', data=storedData)
-  sigma <- predict(storedModel, what='sigma', newdata=newx, type='response', data=storedData)
-  nu <- predict(storedModel, what='nu', newdata=newx, type='response', data=storedData)
-  tau <- predict(storedModel, what='tau', newdata=newx, type='response', data=storedData)
+  newx <- data.frame(lftd = ageDays)
+  mu <- predict(storedModel, what = 'mu', newdata = newx, type = 'response', data = storedData)
+  sigma <- predict(storedModel, what = 'sigma', newdata = newx, type = 'response', data = storedData)
+  nu <- predict(storedModel, what = 'nu', newdata = newx, type = 'response', data = storedData)
+  tau <- predict(storedModel, what = 'tau', newdata = newx, type = 'response', data = storedData)
   return(data.frame(
     a = seq(round(min(LOscore), 0), round(max(LOscore), 0), .01),
     b = dJSU(seq(round(min(LOscore), 0), round(max(LOscore), 0), .01), mu, sigma, nu, tau),
-    abline = log(score/(1-score)))
+    abline = log(score/(1 - score)))
   )
 }
 
@@ -220,6 +220,27 @@ participantData <- function(casenumber, gender, date, naam){
       'Naam' = toString(naam),
       check.names = FALSE
     )
+  )
+}
+
+discrepantieAnalyze <- function(date, testDateLion, testDateMonkey, meanpropLion, meanpropMonkey, gender, digits = 0) {
+  discrepantiecore5 = discrepantie(date, testDateLion, testDateMonkey, meanpropLion, meanpropMonkey, gender, 5)
+  discrepantiecore10 = discrepantie(date, testDateLion, testDateMonkey, meanpropLion, meanpropMonkey, gender, 10)
+  
+  return(
+    data.frame(
+      'Discrepantie' = as.character(round(discrepantiecore5[1], digits)),
+      'Kritieke waarde sign. niveau in 5%' = as.character(round(discrepantiecore5[2], digits)),
+      'Kritieke waarde sign. niveau in 10%' = as.character(round(discrepantiecore10[2], digits)),
+      'Base rate' = as.character(round(discrepantiecore5[3], digits)),
+      check.names = FALSE)
+    
+    
+    # 'Discrepantie' = c(as.character(round(discrepantiecore5[1], digits)), as.character(round(discrepantiecore10[1], digits))),
+    # 'Kritieke waarde' = c(as.character(round(discrepantiecore5[2], digits)),as.character(round(discrepantiecore10[2], digits))),
+    # 'Base rate' = c(as.character(round(discrepantiecore5[3], digits)),as.character(round(discrepantiecore10[3], digits))),
+    # 'Nominale sign. niveau in %' = c('5', '10'),
+    # check.names = FALSE)
   )
 }
 
@@ -237,7 +258,6 @@ taskData <- function(fetchedData, date) {
 analizeData <- function(filteredData, date, task, gender, digets = 0) {
   averageData <- getAverage(filteredData)
   practiceScore <- getPracticeScore(filteredData)
-  averagePracticeData <- getAveragePractice(filteredData)
   testDate = min(filteredData$created_at)
   confidence = confidenceInterval(date, testDate, averageData$meanprop, task, gender)
   tscore = tScore(date, testDate, averageData$meanprop, task, gender)
@@ -254,14 +274,14 @@ analizeData <- function(filteredData, date, task, gender, digets = 0) {
   return(data.frame(
     'Oefen score' = as.character(round(practiceScore$practice_items_correct, digets)),
     'Ruwe score' = as.character(round(averageData$meanprop * 100, digets)),
-    'BI 95%' = paste(as.character(round(confidence, digets)), collapse='-'),
+    'BI 95%' = paste(as.character(round(confidence, digets)), collapse = '-'),
     'Percentiel score' = as.character(round(percentiel, digets)),
     'T-score' = as.character(round(tscore[1], digets)),
     'T-score BI 95%' = paste(
         as.character(round(tscore[2], digets)), 
-        as.character(round(tscore[3], digets)), sep='-'),
+        as.character(round(tscore[3], digets)), sep = '-'),
     'kwalitatieve beschrijving' = description$description, 
-    check.names=FALSE
+    check.names = FALSE
     )
   )
 }
@@ -278,7 +298,7 @@ analizeDataManual <- function(meanprop, testDate, birthDate, task, gender, diget
   
   description = description[description$min < percentiel, ]
   description = description[description$max >= percentiel, ]
-  if(length(tscore) == 1) {
+  if (length(tscore) == 1) {
     # This is a strange rShinny thing, this method is passed twice. The first time 
     # without values. This gives an ugly "arguments imply differing number of rows: 0, 1"
     # warning.
@@ -287,13 +307,13 @@ analizeDataManual <- function(meanprop, testDate, birthDate, task, gender, diget
   }
   return(data.frame(
     'Ruwe score' = as.character(round(meanprop * 100, digets)),
-    'BI 95%' = paste(as.character(round(confidence, digets)), collapse='-'),
+    'BI 95%' = paste(as.character(round(confidence, digets)), collapse = '-'),
     'Percentiel score' = as.character(round(percentiel, digets)),
     'T-score' = as.character(round(tscore[1], digets)),
     'T-score BI 95%' = paste(
       as.character(round(tscore[2], digets)),
-      as.character(round(tscore[3], digets)), sep='-'),
+      as.character(round(tscore[3], digets)), sep = '-'),
     'kwalitatieve beschrijving' = description$description, 
-    check.names=FALSE
+    check.names = FALSE
   ))
 }

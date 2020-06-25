@@ -1,0 +1,59 @@
+---
+title: "Norm score report"
+params:
+  groupname: NA
+  taskname: NA
+  tasknameDiscrepantie: NA
+  path: NA
+  storedModel: NA
+  storedModelDiscrepantie: NA
+  storedData: NA
+  storedDataDiscrepantie: NA
+  discrepantie: NA
+  ageDays: NA
+  meanproportion: NA
+  meanproportionDiscrepantie: NA
+  participantData: NA
+  taskData: NA
+  taskDataDiscrepantie: NA
+  analizeData: NA
+  analizeDataDiscrepantie: NA
+---
+
+```{r echo  = FALSE}
+library(knitr)
+h3(params$groupname)
+kable(params$participantData)
+kable(params$taskData)
+
+```
+
+```{r echo  = FALSE}
+h3('Dicrepantie Analyze')
+kable(params$discrepantie)
+
+h3(params$taskname)
+kable(params$analizeData)
+
+```
+
+```{r echo = FALSE}
+source(paste(params$path, "plots.R", sep = '/'))
+```
+
+```{r echo = FALSE, results='hide'}
+growthPlot(params$storedModel, params$storedData, params$ageDays, params$meanproportion)
+```
+
+```{r echo = FALSE}
+h3(params$tasknameDiscrepantie)
+kable(params$analizeDataDiscrepantie)
+```
+
+```{r echo = FALSE}
+source(paste(params$path, "plots.R", sep = '/'))
+```
+
+```{r echo = FALSE, results='hide'}
+growthPlot(params$storedModelDiscrepantie, params$storedDataDiscrepantie, params$ageDays, params$meanproportionDiscrepantie)
+```
