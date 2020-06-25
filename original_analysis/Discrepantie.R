@@ -74,6 +74,6 @@ se2<-10*sqrt(1-.84)}
 if (tr1-tr2>=0){z<-qnorm(1-a/200)}
 if (tr1-tr2<0){z<-qnorm(a/200)}
 cr<-z*sqrt(se1^2+se2^2)
-return(c(round(tr1-tr2,1),round(cr,1)))}
+return(c(tr1-tr2, cr))}
 
 disc(ld,.3,.35,10)
