@@ -178,45 +178,45 @@ listNormData <- function(filteredData, task, taskId, gender, date) {
   ))
 }
 
-listDiscrepantieData <- function(filteredData, filteredDataDiscrepantie, task, taskDiscrepantie, taskId, tasIdDiscrepantie, gender, date) {
+listCounterpartData <- function(filteredData, filteredDataCounterpart, task, taskCounterpart, taskId, tasIdCounterpart, gender, date) {
   groupname <- unique(filteredData$group_name)
   caseNumber <- unique(filteredData$participant_case_number)
 
   averageData <- getAverage(filteredData)
-  averageDataDiscrepantie <- getAverage(filteredDataDiscrepantie)
+  averageDataCounterpart <- getAverage(filteredDataCounterpart)
   testDateLion = min(filteredData$created_at)
-  testDateMonkey = min(filteredDataDiscrepantie$created_at)
+  testDateMonkey = min(filteredDataCounterpart$created_at)
   ageDays = ageAtTestDay(date, testDateLion)
 
   return(list(
     groupname = groupname,
     taskname = names(tasksArray()[as.numeric(task)]),
-    tasknameDiscrepantie = names(tasksArray()[as.numeric(taskDiscrepantie)]),
+    tasknameCounterpart = names(tasksArray()[as.numeric(taskCounterpart)]),
     path = getwd(),
     storedModel = getStoredModel(task, gender),
-    storedModelDiscrepantie = getStoredModel(taskDiscrepantie, gender),
+    storedModelCounterpart = getStoredModel(taskCounterpart, gender),
     storedData = getStoredData(task, gender),
-    storedDataDiscrepantie = getStoredData(taskDiscrepantie, gender),
-    discrepantie = discrepantieAnalyze(date, testDateLion, testDateMonkey, averageData$meanprop, averageDataDiscrepantie$meanprop, gender),
+    storedDataCounterpart = getStoredData(taskCounterpart, gender),
+    discrepantie = discrepantieAnalyze(date, testDateLion, testDateMonkey, averageData$meanprop, averageDataCounterpart$meanprop, gender),
     ageDays = ageDays,
     meanproportion = averageData$meanprop,
-    meanproportionDiscrepantie = averageDataDiscrepantie$meanprop,
+    meanproportionDiscrepantie = averageDataCounterpart$meanprop,
     participantData = participantData(
       caseNumber,
       gender,
       date,
       unique(filteredData$participant_name)),
     taskData = taskData(filteredData, date),
-    taskDataDiscrepantie = taskData(filteredDataDiscrepantie, date),
+    taskDataDiscrepantie = taskData(filteredDataCounterpart, date),
     analizeData = analizeData(
       filteredData,
       date,
       task,
       gender),
     analizeDataDiscrepantie = analizeData(
-      filteredDataDiscrepantie,
+      filteredCounterpart,
       date,
-      taskDiscrepantie,
+      taskCounterpart,
       gender)
   ))
 }
