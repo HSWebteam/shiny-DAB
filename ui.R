@@ -26,14 +26,9 @@ fluidPage(
                            'Mannelijk' = 'man',
                            'Vrouwelijk' = 'vrouw')
             ),
-            # radioButtons('region', 'Regio:',
-            #              c('n.v.t' = 'na',
-            #                'Noord' = 'noord',
-            #                'Oost' = 'oost',
-            #                'Zuid' = 'zuid',
-            #                'West' = 'west')
-            # ),
-            radioButtons('format', 'Selecteer bestandsformat:', c('PDF', 'HTML'),
+            radioButtons('format', 
+                         'Selecteer bestandsformat:', 
+                         c('PDF', 'HTML'),
                          inline = TRUE),
             downloadButton('report', 'Generate report')
         ),

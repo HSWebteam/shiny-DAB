@@ -6,6 +6,12 @@
 library(gamlss)
 library(eeptools)
 
+# hieronder wordt met de geboortedatum (gebdat) en de testdatum (testdat) de leeftijd in dagen berekend (ld)
+# Deze zijn uitgecommentarieerd om er voor te zorgen dat TestScriptDiscrepantie.R werkt.
+# gebdat<-as.Date('2007-02-11')
+# testdat<-as.Date('2019-02-11')
+# ld<-as.numeric(age_calc(gebdat,enddate=testdat,units='days'))
+
 # data Leeuwenspel
 D1<-read.table('Lion1_Sample.dat',header=T)
 names(D1)<-c('lftd','score','sekse','noord','oost','zuid','west','regio','lftj','psw')
@@ -26,12 +32,6 @@ D2<-data.frame(D2,LOscore)
 
 out2<-gamlss(LOscore~cs(lftd,df=2),sigma.formula=~cs(lftd,df=0.6),nu.formula=~cs(lftd,df=2),tau.formula=~1,weights=psw,family=JSU,data=D2)
 
-# hieronder wordt met de geboortedatum (gebdat) en de testdatum (testdat) de leeftijd in dagen berekend (ld)
-
-gebdat<-as.Date('2007-02-11')
-testdat<-as.Date('2019-02-11')
-ld<-as.numeric(age_calc(gebdat,enddate=testdat,units='days'))
-
 # hieronder de functie disc() voor de discrepantie tussen t-scores
 # x is leeftijd in dagen, y1 en y2 zijn proporties correct
 # y1 is de proportie correct leeuwenspel
@@ -50,6 +50,9 @@ sigma2<-predict(out2,what='sigma',newdata=newx,type='response',data=D2)
 nu2<-predict(out2,what='nu',newdata=newx,type='response',data=D2)
 tau2<-predict(out2,what='tau',newdata=newx,type='response',data=D2)
 tr2<-qnorm(pJSU(log(y2/(1-y2)),mu2,sigma2,nu2,tau2))*10+50 # from standard normal to T with mean 50 and sd 10 
+
+print(tr1)
+print(tr2)
 if (trunc(x/365,0)==6){
 se1<-10*sqrt(1-.86)
 se2<-10*sqrt(1-.87)}

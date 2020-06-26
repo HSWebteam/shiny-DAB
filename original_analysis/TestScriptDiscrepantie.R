@@ -11,7 +11,8 @@ testdat <- as.Date('2019-04-10')
 ld <- as.numeric(age_calc(gebdat,enddate=testdat,units='days'))
 scoreleeuwen = .8525
 scoreApen = .7641667
-
+discrepantiescore = -7.3997
+# 7.399678 
 # Discrepantie model with birthdate
 source("Discrepantie.R", echo = FALSE)
 source("Discrep_perc.R", echo = FALSE)
@@ -28,7 +29,9 @@ pcds(ld,discrepantie10[1])
 source("Discrep2_perc.R", echo = FALSE)
 print("Discrepantie with girls")
 print("percentiel score")
-pcds2(ld, scoreleeuwen - scoreApen, 1)
+pcds2(ld, discrepantiescore, 1)
+pcds2(ld, discrepantiescore, 1)
 
 print("Discrepantie model with boys")
-pcs(ld, scoreleeuwen - scoreApen, 2)
+pcds2(ld, discrepantiescore, 2)
+pcds2(ld, discrepantiescore, 2)
