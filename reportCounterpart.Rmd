@@ -3,21 +3,21 @@ title: "Norm score report"
 params:
   groupname: NA
   taskname: NA
-  tasknameDiscrepantie: NA
+  tasknameCounterpart: NA
   path: NA
   storedModel: NA
-  storedModelDiscrepantie: NA
+  storedModelCounterpart: NA
   storedData: NA
-  storedDataDiscrepantie: NA
+  storedDataCounterpart: NA
   discrepantie: NA
   ageDays: NA
   meanproportion: NA
-  meanproportionDiscrepantie: NA
+  meanproportionCounterpart: NA
   participantData: NA
   taskData: NA
-  taskDataDiscrepantie: NA
+  taskDataCounterpart: NA
   analizeData: NA
-  analizeDataDiscrepantie: NA
+  analizeDataCounterpart: NA
 ---
 
 ```{r echo  = FALSE}
@@ -46,8 +46,8 @@ growthPlot(params$storedModel, params$storedData, params$ageDays, params$meanpro
 ```
 
 ```{r echo = FALSE}
-h3(params$tasknameDiscrepantie)
-kable(params$analizeDataDiscrepantie)
+h3(params$tasknameCounterpart)
+kable(params$analizeDataCounterpart)
 ```
 
 ```{r echo = FALSE}
@@ -55,5 +55,5 @@ source(paste(params$path, "plots.R", sep = '/'))
 ```
 
 ```{r echo = FALSE, results='hide'}
-growthPlot(params$storedModelDiscrepantie, params$storedDataDiscrepantie, params$ageDays, params$meanproportionDiscrepantie)
+growthPlot(params$storedModelCounterpart, params$storedDataCounterpart, params$ageDays, params$meanproportionCounterpart)
 ```
