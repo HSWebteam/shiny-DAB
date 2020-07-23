@@ -105,7 +105,7 @@ jsuDistribution <- function(ageDays, meanprop, task, gender, logtransform = TRUE
   return(pJSU(score, mu, sigma, nu, tau))
 }
 
-percentielScoreAge <- function(birthDate, testDate, meanprop, task, gender, logtransform = FALSE){
+percentielScoreAge <- function(birthDate, testDate, meanprop, task, gender, logtransform = TRUE){
   if (is.null(meanprop)) {
     return(FALSE)
   }
