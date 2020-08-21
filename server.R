@@ -220,9 +220,18 @@ function(input, output, session) {
     }
     status <- subset(filterTaskStatus(), task_id == unique(filteredData(input$task, input$task_id)$task_id))
     if (status$finished != 1) {
-      "<font color=\"#FF0000\"><b>Let op! participant heeft deze taak nog niet afgerond</b></font>"
+      return("<font color=\"#FF0000\"><b>Let op! participant heeft deze taak nog niet afgerond</b></font>")
     }
 
+    storedData = getStoredData(input$task, input$gender)
+    testDate = min(filteredData(input$task, input$task_id)$created_at)
+    ageDays = ageAtTestDay(input$date, testDate)
+
+    if (max(storedData$lftd) < ageDays ||
+        min(storedData$lftd) > ageDays ) {
+      return("<font color=\"#FF0000\"><b>Let op! Leeftijd ligt buiten de normgroep</b></font>")
+    }
+    
     if (is.null(dim(filteredData(input$task_counterpart, input$task_id_counterpart))) ||
        NROW(filteredData(input$task_monkey, input$task_id_monkey)) == 0) {
       return()
@@ -232,7 +241,7 @@ function(input, output, session) {
         filterTaskStatus(),
         task_id == unique(filteredData(input$task_counterpart, input$task_id_counterpart)$task_id))
     if (statusCounterpart$finished != 1) {
-      "<font color=\"#FF0000\"><b>Let op! participant heeft deze taak nog niet afgerond</b></font>"
+      return("<font color=\"#FF0000\"><b>Let op! participant heeft deze taak nog niet afgerond</b></font>")
     }
   })
 
