@@ -15,22 +15,15 @@ params:
 
 ```{r echo  = FALSE}
 
-h3(paste(params$groupname, params$taskname, sep=' - '))
-
-```
-
-```{r echo  = FALSE}
+h3(paste(params$groupname, params$taskname, sep = ' - '))
 library(knitr)
 kable(params$participantData)
 kable(params$taskData)
 kable(params$analizeData)
 
-```
-
-```{r echo  = FALSE}
 source(paste(params$path, "plots.R", sep = '/'))
 ```
 
-```{r echo  = FALSE}
+```{r echo = FALSE, results='hide'}
 growthPlot(params$storedModel, params$storedData, params$ageDays, params$meanproportion)
 ```

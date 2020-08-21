@@ -25,19 +25,17 @@ library(knitr)
 h3(params$groupname)
 kable(params$participantData)
 
-```
-
-```{r echo  = FALSE}
 h3('Discrepantie analyse')
 kable(params$discrepantie)
+```
 
+\newpage
+
+```{r echo  = FALSE}
 h3(params$taskname)
 kable(params$taskData)
 kable(params$analizeData)
 
-```
-
-```{r echo = FALSE}
 source(paste(params$path, "plots.R", sep = '/'))
 ```
 
@@ -45,13 +43,13 @@ source(paste(params$path, "plots.R", sep = '/'))
 growthPlot(params$storedModel, params$storedData, params$ageDays, params$meanproportion)
 ```
 
+\newpage
+
 ```{r echo = FALSE}
 h3(params$tasknameCounterpart)
 kable(params$taskDataCounterpart)
 kable(params$analizeDataCounterpart)
-```
 
-```{r echo = FALSE}
 source(paste(params$path, "plots.R", sep = '/'))
 ```
 
