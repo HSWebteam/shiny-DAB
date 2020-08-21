@@ -288,11 +288,11 @@ analizeData <- function(filteredData, date, task, gender, digets = 0) {
     'Ruwe score' = as.character(round(averageData$meanprop * 100, digets)),
     'BI 95%' = paste(as.character(round(confidence, digets)), collapse = '-'),
     'Percentiel score' = as.character(round(percentiel, digets)),
+    'kwalitatieve beschrijving' = description,
     'T-score' = as.character(round(tscore[1], digets)),
     'T-score BI 95%' = paste(
         as.character(round(tscore[2], digets)),
         as.character(round(tscore[3], digets)), sep = '-'),
-    'kwalitatieve beschrijving' = description,
     check.names = FALSE
     )
   )
@@ -315,11 +315,11 @@ analizeDataManual <- function(meanprop, testDate, birthDate, task, gender, diget
     'Ruwe score' = as.character(round(meanprop * 100, digets)),
     'BI 95%' = paste(as.character(round(confidence, digets)), collapse = '-'),
     'Percentiel score' = as.character(round(percentiel, digets)),
+    'kwalitatieve beschrijving' = description,
     'T-score' = as.character(round(tscore[1], digets)),
     'T-score BI 95%' = paste(
       as.character(round(tscore[2], digets)),
       as.character(round(tscore[3], digets)), sep = '-'),
-    'kwalitatieve beschrijving' = description,
     check.names = FALSE
   ))
 }
