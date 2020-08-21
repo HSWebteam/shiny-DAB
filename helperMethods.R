@@ -38,7 +38,7 @@ getStoredData <- function(task, gender) {
     if (gender == 'vrouw') {
       storedData <- readRDS(file = paste(getwd(), "models/lionDataGirls.rds", sep = '/'))
     }
-    if (gender == 'na') {
+    if (gender == 'nvt') {
       storedData <- readRDS(file = paste(getwd(), "models/lionData.rds", sep = '/'))
     }
   }
@@ -50,7 +50,7 @@ getStoredData <- function(task, gender) {
     if (gender == 'vrouw') {
       storedData <- readRDS(file = paste(getwd(), "models/monkeyDataGirls.rds", sep = '/'))
     }
-    if (gender == 'na') {
+    if (gender == 'nvt') {
       storedData <- readRDS(file = paste(getwd(), "models/monkeyData.rds", sep = '/'))
     }
   }
@@ -61,7 +61,7 @@ getStoredData <- function(task, gender) {
     if (gender == 'vrouw') {
       storedData <- readRDS(file = paste(getwd(), "models/discrepantieDataGirls.rds", sep = '/'))
     }
-    if (gender == 'na') {
+    if (gender == 'nvt') {
       storedData <- readRDS(file = paste(getwd(), "models/discrepantiePercentageData.rds", sep = '/'))
     }
   }
@@ -76,7 +76,7 @@ getStoredModel <- function(task, gender) {
     if (gender == 'vrouw') {
       storedModel <- readRDS(file = paste(getwd(), "models/lionModelGirls.rds", sep = '/'))
     }
-    if (gender == 'na') {
+    if (gender == 'nvt') {
       storedModel <- readRDS(file = paste(getwd(), "models/lionModel.rds", sep = '/'))
     }
   }
@@ -88,7 +88,7 @@ getStoredModel <- function(task, gender) {
     if (gender == 'vrouw') {
       storedModel <- readRDS(file = paste(getwd(), "models/monkeyModelGirls.rds", sep = '/'))
     }
-    if (gender == 'na') {
+    if (gender == 'nvt') {
       storedModel <- readRDS(file = paste(getwd(), "models/monkeyModel.rds", sep = '/'))
     }
   }
@@ -99,7 +99,7 @@ getStoredModel <- function(task, gender) {
     if (gender == 'vrouw') {
       storedModel <- readRDS(file = paste(getwd(), "models/discrepantieModelGirls.rds", sep = '/'))
     }
-    if (gender == 'na') {
+    if (gender == 'nvt') {
       storedModel <- readRDS(file = paste(getwd(), "models/discrepantiePercentage.rds", sep = '/'))
     }
   }
@@ -114,7 +114,7 @@ getColumnName <- function(task, gender) {
     if (gender == 'vrouw') {
       return('liongirls')
     }
-    if (gender == 'na') {
+    if (gender == 'nvt') {
       return('lion')
     }
   }
@@ -126,7 +126,7 @@ getColumnName <- function(task, gender) {
     if (gender == 'vrouw') {
       return('monkeygirls')
     }
-    if (gender == 'na') {
+    if (gender == 'nvt') {
       return('monkey')
     }
   }

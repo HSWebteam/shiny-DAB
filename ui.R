@@ -22,7 +22,7 @@ fluidPage(
                 value = Sys.Date() - years(6)
             ),
             radioButtons('gender', 'Geslacht:',
-                         c('n.v.t' = 'na',
+                         c('n.v.t' = 'nvt',
                            'Mannelijk' = 'man',
                            'Vrouwelijk' = 'vrouw')
             ),
