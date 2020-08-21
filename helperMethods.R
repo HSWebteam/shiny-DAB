@@ -200,21 +200,21 @@ listCounterpartData <- function(filteredData, filteredDataCounterpart, task, tas
     discrepantie = discrepantieAnalyze(date, testDateLion, testDateMonkey, averageData$meanprop, averageDataCounterpart$meanprop, gender),
     ageDays = ageDays,
     meanproportion = averageData$meanprop,
-    meanproportionDiscrepantie = averageDataCounterpart$meanprop,
+    meanproportionCounterpart = averageDataCounterpart$meanprop,
     participantData = participantData(
       caseNumber,
       gender,
       date,
       unique(filteredData$participant_name)),
     taskData = taskData(filteredData, date),
-    taskDataDiscrepantie = taskData(filteredDataCounterpart, date),
+    taskDataCounterpart = taskData(filteredDataCounterpart, date),
     analizeData = analizeData(
       filteredData,
       date,
       task,
       gender),
-    analizeDataDiscrepantie = analizeData(
-      filteredCounterpart,
+    analizeDataCounterpart = analizeData(
+      filteredDataCounterpart,
       date,
       taskCounterpart,
       gender)

@@ -134,7 +134,7 @@ function(input, output, session) {
       tasks <- tasksArray()
       radioButtons(
         "task_counterpart",
-        "selecteer taak:",
+        "selecteer discrepantie taak:",
         tasks[2:3])
     }
   })

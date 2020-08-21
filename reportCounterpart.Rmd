@@ -24,15 +24,15 @@ params:
 library(knitr)
 h3(params$groupname)
 kable(params$participantData)
-kable(params$taskData)
 
 ```
 
 ```{r echo  = FALSE}
-h3('Dicrepantie Analyze')
+h3('Discrepantie analyse')
 kable(params$discrepantie)
 
 h3(params$taskname)
+kable(params$taskData)
 kable(params$analizeData)
 
 ```
@@ -47,6 +47,7 @@ growthPlot(params$storedModel, params$storedData, params$ageDays, params$meanpro
 
 ```{r echo = FALSE}
 h3(params$tasknameCounterpart)
+kable(params$taskDataCounterpart)
 kable(params$analizeDataCounterpart)
 ```
 
