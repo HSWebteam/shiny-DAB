@@ -97,7 +97,12 @@ jsuDistribution <- function(ageDays, meanprop, task, gender, logtransform = TRUE
   sigma <- predict(storedModel, what = 'sigma', newdata = newx, type = 'response', data = storedData)
   nu <- predict(storedModel, what = 'nu', newdata = newx, type = 'response', data = storedData)
   tau <- predict(storedModel, what = 'tau', newdata = newx, type = 'response', data = storedData)
-  if(logtransform){
+  if (max(storedData$lftd) < ageDays ||
+      min(storedData$lftd) > ageDays ) {
+    meanprop <- 0.0
+  }
+
+  if (logtransform) {
     score <- log(meanprop/(1 - meanprop))
   } else {
     score <- meanprop
@@ -276,14 +281,7 @@ analizeData <- function(filteredData, date, task, gender, digets = 0) {
   confidence = confidenceInterval(date, testDate, averageData$meanprop, task, gender)
   tscore = tScore(date, testDate, averageData$meanprop, task, gender)
   percentiel = percentielScoreAge(date, testDate, averageData$meanprop, task, gender)
-  description <- data.frame(
-    min = c(0,5,10,25,75,90,95),
-    max = c(5,10,25,75,90,95,100),
-    description = c('Zeer laag', 'Laag', 'Beneden gemiddeld',
-      'Gemiddeld', 'Boven gemiddeld', 'Hoog','Zeer hoog'))
-
-  description = description[description$min < percentiel, ]
-  description = description[description$max >= percentiel, ]
+  description <- percentielDescription(percentiel)
 
   return(data.frame(
     'Oefen score' = as.character(round(practiceScore$practice_items_correct, digets)),
@@ -294,7 +292,7 @@ analizeData <- function(filteredData, date, task, gender, digets = 0) {
     'T-score BI 95%' = paste(
         as.character(round(tscore[2], digets)),
         as.character(round(tscore[3], digets)), sep = '-'),
-    'kwalitatieve beschrijving' = description$description,
+    'kwalitatieve beschrijving' = description,
     check.names = FALSE
     )
   )
@@ -304,14 +302,8 @@ analizeDataManual <- function(meanprop, testDate, birthDate, task, gender, diget
   confidence = confidenceInterval(birthDate, testDate, meanprop, task, gender)
   tscore = tScore(birthDate, testDate, meanprop, task, gender)
   percentiel = percentielScoreAge(birthDate, testDate, meanprop, task, gender)
-  description <- data.frame(
-    min = c(0,5,10,25,75,90,95),
-    max = c(5,10,25,75,90,95,100),
-    description = c('Zeer laag', 'Laag', 'Beneden gemiddeld',
-                    'Gemiddeld', 'Boven gemiddeld', 'Hoog','Zeer hoog'))
+  description <- percentielDescription(percentiel)
 
-  description = description[description$min < percentiel, ]
-  description = description[description$max >= percentiel, ]
   if (length(tscore) == 1) {
     # This is a strange rShinny thing, this method is passed twice. The first time
     # without values. This gives an ugly "arguments imply differing number of rows: 0, 1"
@@ -327,7 +319,23 @@ analizeDataManual <- function(meanprop, testDate, birthDate, task, gender, diget
     'T-score BI 95%' = paste(
       as.character(round(tscore[2], digets)),
       as.character(round(tscore[3], digets)), sep = '-'),
-    'kwalitatieve beschrijving' = description$description,
+    'kwalitatieve beschrijving' = description,
     check.names = FALSE
   ))
+}
+
+percentielDescription <- function(percentiel) {
+  description <- data.frame(
+    min = c(0,5,10,25,75,90,95),
+    max = c(5,10,25,75,90,95,100),
+    description = c('Zeer laag', 'Laag', 'Beneden gemiddeld',
+                    'Gemiddeld', 'Boven gemiddeld', 'Hoog','Zeer hoog'))
+
+  description = description[description$min < percentiel, ]
+  description = description[description$max >= percentiel, ]
+  if (nrow(description) == 0 ) {
+    return('nvt')
+  }
+
+  return(description$description)
 }
