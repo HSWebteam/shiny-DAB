@@ -237,11 +237,17 @@ function(input, output, session) {
       return()
     }
     
+    counterpartData <- filteredData(input$task_counterpart, input$task_id_counterpart)
+    if (is.null(dim(counterpartData)) ||
+        NROW(counterpartData) == 0) {
+      return("<font color=\"#FF0000\"><b>Let op! De dicrepantie taak heeft geen resultaat</b></font>")
+    }
+    
     statusCounterpart <- subset(
         filterTaskStatus(),
-        task_id == unique(filteredData(input$task_counterpart, input$task_id_counterpart)$task_id))
+        task_id == unique(counterpartData$task_id))
     if (statusCounterpart$finished != 1) {
-      return("<font color=\"#FF0000\"><b>Let op! participant heeft deze taak nog niet afgerond</b></font>")
+      return("<font color=\"#FF0000\"><b>Let op! participant heeft de discrepantie taak nog niet afgerond</b></font>")
     }
   })
 
