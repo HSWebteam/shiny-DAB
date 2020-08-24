@@ -99,7 +99,7 @@ jsuDistribution <- function(ageDays, meanprop, task, gender, logtransform = TRUE
   tau <- predict(storedModel, what = 'tau', newdata = newx, type = 'response', data = storedData)
   if (max(storedData$lftd) < ageDays ||
       min(storedData$lftd) > ageDays ) {
-    meanprop <- 0.0
+    meanprop <- 0
   }
 
   if (logtransform) {
@@ -166,8 +166,16 @@ discrepantie <- function(birthDate, testDateLion, testdateMonkey, meanPropLion, 
     return(FALSE)
   }
   ageDays = ageAtTestDay(birthDate, testDateLion)
-  tr1 <- qnorm(jsuDistribution(ageDays, meanPropLion, 1, gender))*10 + 50 # from standard normal to T with mean 50 and sd 10
-  tr2 <- qnorm(jsuDistribution(ageDays, meanPropMonkey, 2, gender))*10 + 50 # from standard normal to T with mean 50 and sd 10
+  jsuDistribution1 <- jsuDistribution(ageDays, meanPropLion, 1, gender)
+  jsuDistribution2 <- jsuDistribution(ageDays, meanPropMonkey, 2, gender)
+
+  if (jsuDistribution1 == 0 || jsuDistribution2 == 0) {
+    return(FALSE)
+  }
+  
+  tr1 <- qnorm(jsuDistribution1)*10 + 50 # from standard normal to T with mean 50 and sd 10
+  tr2 <- qnorm(jsuDistribution2)*10 + 50 # from standard normal to T with mean 50 and sd 10
+  
   se1 <- c(0, 0)
   se2 <- c(0, 0)
   if (trunc(ageDays/365,0) == 6) {
@@ -249,6 +257,9 @@ discrepantieAnalyze <- function(date, testDateLion, testDateMonkey, meanpropLion
 }
 
 checkSignDiscrepantie <- function(score, criticalValue) {
+  if (score == 0 || is.na(criticalValue)) {
+    return('nvt')
+  }
   if (criticalValue > 0 ) {
     if (score > criticalValue) {
       return('Wel sign.')
