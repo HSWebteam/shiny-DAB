@@ -182,7 +182,7 @@ function(input, output, session) {
     if (length(input$analyze_type) != 0 &&
        input$analyze_type == 'discrepantie') {
       if (!is.recursive(fetchedData())) {
-        sliderInput("meanprop_monkey", "proportie correct", .01, 1, .5, step = .005)
+        sliderInput("meanprop_counterpart", "proportie correct", .01, 1, .5, step = .005)
       }
     }
   })
@@ -205,7 +205,7 @@ function(input, output, session) {
        input$analyze_type == 'discrepantie') {
       if (!is.recursive(fetchedData())) {
         dateInput(
-          'testdate_monkey',
+          'testdate_counterpart',
           label = 'TestDate: jjjj-mm-dd',
           value = Sys.Date() - years(6)
         )
@@ -231,18 +231,18 @@ function(input, output, session) {
         min(storedData$lftd) > ageDays ) {
       return("<font color=\"#FF0000\"><b>Let op! Leeftijd ligt buiten de normgroep</b></font>")
     }
-    
+
     if (is.null(dim(filteredData(input$task_counterpart, input$task_id_counterpart))) ||
        NROW(filteredData(input$task_monkey, input$task_id_monkey)) == 0) {
       return()
     }
-    
+
     counterpartData <- filteredData(input$task_counterpart, input$task_id_counterpart)
     if (is.null(dim(counterpartData)) ||
         NROW(counterpartData) == 0) {
       return("<font color=\"#FF0000\"><b>Let op! De dicrepantie taak heeft geen resultaat</b></font>")
     }
-    
+
     statusCounterpart <- subset(
         filterTaskStatus(),
         task_id == unique(counterpartData$task_id))
@@ -293,19 +293,19 @@ function(input, output, session) {
         input$gender,
         percentage)
 
-      if (discrepantiecore > 0 ||
-         discrepantiecore == FALSE) {
+      if (length(discrepantiecore) < 3 || discrepantiecore == FALSE) {
         return(data.frame(
           'Discrepantie' = 'Geen data gevonden'
         ))
       }
 
-      return(data.frame(
-        'Discrepantie' = as.character(round(discrepantiecore[1], 5)),
-        'Kritieke waarde' = as.character(round(discrepantiecore[2], 5)),
-        'Nominale sign. niveau in %' = as.character(round(percentage, 5)),
-        check.names = FALSE
-      ))
+      return(discrepantieAnalyze(input$date,
+             input$testdate,
+             input$testdate_counterpart,
+             input$meanprop,
+             input$meanprop_counterpart,
+             input$gender,
+             5))
     }
 
     filteredDataLion <- filteredData(input$task, input$task_id)
