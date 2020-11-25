@@ -10,10 +10,14 @@ getData <- function(search){
   if (query$returnurl == 'https://taken.vagrant') {
     httr::set_config(config(ssl_verifypeer = 0L))
   }
-  resp <- GET(query$returnurl, path = 'api/results', query = list(token = query$token))
-  # TODO check status: data$status_code
+
+  resp <- GET(
+      query$returnurl,
+      add_headers(Authorization = paste('Bearer', query$token, sep = " ", collapse = NULL)),
+      path = 'api/results')
+
   if (resp$status_code != "200") {
-    stop("API did not returned error", call. = FALSE)
+    stop("API returned error", call. = FALSE)
   }
   if (http_type(resp) != "application/json") {
     stop("API did not return json", call. = FALSE)
@@ -55,7 +59,11 @@ getTaskStatus <- function(search){
   if (query$returnurl == 'https://taken.vagrant') {
     httr::set_config(config(ssl_verifypeer = 0L))
   }
-  resp <- GET(query$returnurl, path = 'api/task', query = list(token = query$token))
+
+  resp <- GET(
+      query$returnurl,
+      add_headers(Authorization = paste('Bearer', query$token, sep = " ", collapse = NULL)),
+      path = 'api/task')
 
   if (resp$status_code != "200") {
     stop("API did not returned error", call. = FALSE)
@@ -172,10 +180,10 @@ discrepantie <- function(birthDate, testDateLion, testdateMonkey, meanPropLion, 
   if (jsuDistribution1 == 0 || jsuDistribution2 == 0) {
     return(FALSE)
   }
-  
+
   tr1 <- qnorm(jsuDistribution1)*10 + 50 # from standard normal to T with mean 50 and sd 10
   tr2 <- qnorm(jsuDistribution2)*10 + 50 # from standard normal to T with mean 50 and sd 10
-  
+
   se1 <- c(0, 0)
   se2 <- c(0, 0)
   if (trunc(ageDays/365,0) == 6) {
